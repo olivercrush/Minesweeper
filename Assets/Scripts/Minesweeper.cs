@@ -6,6 +6,7 @@ public class Minesweeper : MonoBehaviour
 {
     public GameObject _coveredCellPrefab;
     public GameObject _coveredBombPrefab;
+    public GameObject _camera;
 
     private bool[,] _grid;
     private List<GameObject> _objectGrid;
@@ -15,6 +16,7 @@ public class Minesweeper : MonoBehaviour
     {
         _grid = GenerateGrid();
         InstantiateObjects(_grid);
+        CenterCamera();
     }
 
     private void InstantiateObjects(bool[,] grid)
@@ -53,5 +55,10 @@ public class Minesweeper : MonoBehaviour
         }
 
         return grid;
+    }
+
+    private void CenterCamera()
+    {
+        _camera.transform.position = new Vector3(_grid.GetLength(1) / 2, _grid.GetLength(0) / 2, -_grid.GetLength(0));
     }
 }
