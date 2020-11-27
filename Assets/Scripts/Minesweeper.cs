@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Minesweeper : MonoBehaviour
 {
-    public GameObject _coveredCellPrefab;
-    public GameObject _coveredBombPrefab;
+    public GameObject _unclickedPrefab;
+    public GameObject _bombHintPrefab;
 
     public GameObject _camera;
     public int _cameraDistance;
@@ -31,10 +31,10 @@ public class Minesweeper : MonoBehaviour
         for (int i = 0; i < grid.GetLength(0); i++) {
             for (int j = 0; j < grid.GetLength(1); j++) {
                 if (grid[i, j]) {
-                    _objectGrid.Add(Instantiate(_coveredBombPrefab, new Vector3(j, i, 0), Quaternion.identity, transform));
+                    _objectGrid.Add(Instantiate(_bombHintPrefab, new Vector3(j, i, 0), Quaternion.identity, transform));
                 }
                 else {
-                    _objectGrid.Add(Instantiate(_coveredCellPrefab, new Vector3(j, i, 0), Quaternion.identity, transform));
+                    _objectGrid.Add(Instantiate(_unclickedPrefab, new Vector3(j, i, 0), Quaternion.identity, transform));
                 }
             }
         }
