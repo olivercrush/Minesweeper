@@ -238,6 +238,10 @@ MonoBehaviour:
   _coveredCellPrefab: {fileID: 2720416742260312121, guid: 3e93d67eb814787468b4eb7e55f59e76, type: 3}
   _coveredBombPrefab: {fileID: 4812749550217987931, guid: f5aa867733ec2bc4baba261ce19322dd, type: 3}
   _camera: {fileID: 519420028}
+  _cameraDistance: 15
+  _width: 15
+  _heigth: 10
+  _bombCount: 20
 --- !u!4 &754157449
 Transform:
   m_ObjectHideFlags: 0

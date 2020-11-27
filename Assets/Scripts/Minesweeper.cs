@@ -6,7 +6,13 @@ public class Minesweeper : MonoBehaviour
 {
     public GameObject _coveredCellPrefab;
     public GameObject _coveredBombPrefab;
+
     public GameObject _camera;
+    public int _cameraDistance;
+
+    public int _width = 5;
+    public int _heigth = 5;
+    public int _bombCount = 5;
 
     private bool[,] _grid;
     private List<GameObject> _objectGrid;
@@ -35,7 +41,7 @@ public class Minesweeper : MonoBehaviour
     }
 
     private bool[,] GenerateGrid() {
-        bool[,] grid = new bool[5,5];
+        bool[,] grid = new bool[_heigth,_width];
         
         for (int i = 0; i < grid.GetLength(0); i++) {
             for (int j = 0; j < grid.GetLength(1); j++) {
@@ -43,14 +49,14 @@ public class Minesweeper : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < _bombCount; i++) {
             int x, y;
             do
             {
-                x = Mathf.FloorToInt(Random.value * 5);
-                y = Mathf.FloorToInt(Random.value * 5);
-            } while (grid[x,y]);
-            grid[x, y] = true;
+                x = Mathf.FloorToInt(Random.value * _width);
+                y = Mathf.FloorToInt(Random.value * _heigth);
+            } while (grid[y,x]);
+            grid[y,x] = true;
             Debug.Log("Bomb at (" + x + ";" + y + ")");
         }
 
@@ -59,6 +65,7 @@ public class Minesweeper : MonoBehaviour
 
     private void CenterCamera()
     {
-        _camera.transform.position = new Vector3(_grid.GetLength(1) / 2, _grid.GetLength(0) / 2, -_grid.GetLength(0));
+        _camera.transform.position = new Vector3(_grid.GetLength(1) / 2, _grid.GetLength(0) / 2, -_cameraDistance);
+        _camera.GetComponent<Camera>().orthographicSize = _cameraDistance;
     }
 }
