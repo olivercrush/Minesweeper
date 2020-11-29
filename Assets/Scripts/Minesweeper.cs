@@ -6,6 +6,7 @@ public class Minesweeper : MonoBehaviour
 {
     public GameObject _unclickedPrefab;
     public GameObject _bombHintPrefab;
+    public GameObject _moveAreaPrefab;
 
     public GameObject _camera;
     public int _cameraDistance;
@@ -28,6 +29,13 @@ public class Minesweeper : MonoBehaviour
     private void InstantiateObjects(bool[,] grid)
     {
         _objectGrid = new List<GameObject>();
+
+        // Move Area
+        GameObject moveArea = Instantiate(_moveAreaPrefab, new Vector3(grid.GetLength(1) / 2, grid.GetLength(0), 0), Quaternion.identity, transform);
+        moveArea.transform.localScale = new Vector3(grid.GetLength(1), 3.1f, 1);
+        _objectGrid.Add(moveArea);
+
+        // Cells
         for (int i = 0; i < grid.GetLength(0); i++) {
             for (int j = 0; j < grid.GetLength(1); j++) {
                 if (grid[i, j]) {

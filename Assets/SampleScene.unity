@@ -237,9 +237,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _unclickedPrefab: {fileID: 2720416742260312121, guid: 3e93d67eb814787468b4eb7e55f59e76, type: 3}
   _bombHintPrefab: {fileID: 2720416742260312121, guid: 984e679278ad27442820fa117b10a28c, type: 3}
+  _moveAreaPrefab: {fileID: 455738228725067588, guid: b7c8f65f2f238b24eab781b3d1428e14, type: 3}
   _camera: {fileID: 519420028}
   _cameraDistance: 15
-  _width: 15
+  _width: 20
   _heigth: 10
   _bombCount: 20
 --- !u!4 &754157449
