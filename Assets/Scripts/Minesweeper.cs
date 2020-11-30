@@ -15,7 +15,7 @@ public class Minesweeper : MonoBehaviour
     public int _heigth = 5;
     public int _bombCount = 5;
 
-    public float _scale = 3.1f;
+    public float _scale = 1f;
     public float _moveAreaSize = 2f;
 
     private bool[,] _grid;
@@ -31,8 +31,8 @@ public class Minesweeper : MonoBehaviour
 
         Vector2 spriteSize = _unclickedPrefab.GetComponent<SpriteRenderer>().size * _scale;
 
-        _moveArea = Instantiate(_rectPrefab, new Vector3(_width / 2 - spriteSize.x / 2, _heigth / 2 - spriteSize.y / 2, 1), Quaternion.identity, transform);
-        _moveArea.GetComponent<SpriteRenderer>().size = new Vector2(_width + _moveAreaSize, _heigth + _moveAreaSize);
+        _moveArea = Instantiate(_rectPrefab, new Vector3(_width * _scale / 2 - _scale / 2, _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
+        _moveArea.GetComponent<SpriteRenderer>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
         _moveArea.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
     }
 
@@ -44,13 +44,13 @@ public class Minesweeper : MonoBehaviour
         for (int i = 0; i < grid.GetLength(0); i++) {
             for (int j = 0; j < grid.GetLength(1); j++) {
                 if (grid[i, j]) {
-                    GameObject bombHint = Instantiate(_bombHintPrefab, new Vector3(j, i, 0), Quaternion.identity, transform);
-                    bombHint.transform.localScale = new Vector3(_scale, _scale, 1);
+                    GameObject bombHint = Instantiate(_bombHintPrefab, new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
+                    bombHint.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
                     _objectGrid.Add(bombHint);
                 }
                 else {
-                    GameObject unclickedPrefab = Instantiate(_unclickedPrefab, new Vector3(j, i, 0), Quaternion.identity, transform);
-                    unclickedPrefab.transform.localScale = new Vector3(_scale, _scale, 1);
+                    GameObject unclickedPrefab = Instantiate(_unclickedPrefab, new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
+                    unclickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
                     _objectGrid.Add(unclickedPrefab);
                 }
             }
