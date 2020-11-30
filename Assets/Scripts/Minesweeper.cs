@@ -6,7 +6,7 @@ public class Minesweeper : MonoBehaviour
 {
     public GameObject _unclickedPrefab;
     public GameObject _bombHintPrefab;
-    public GameObject _moveAreaPrefab;
+    public GameObject _rectPrefab;
 
     public GameObject _camera;
     public int _cameraDistance;
@@ -15,8 +15,12 @@ public class Minesweeper : MonoBehaviour
     public int _heigth = 5;
     public int _bombCount = 5;
 
+    public float _scale = 3.1f;
+    public float _moveAreaSize = 2f;
+
     private bool[,] _grid;
     private List<GameObject> _objectGrid;
+    private GameObject _moveArea;
 
     // Start is called before the first frame update
     void Start()
@@ -24,25 +28,30 @@ public class Minesweeper : MonoBehaviour
         _grid = GenerateGrid();
         InstantiateObjects(_grid);
         CenterCamera();
+
+        Vector2 spriteSize = _unclickedPrefab.GetComponent<SpriteRenderer>().size * _scale;
+
+        _moveArea = Instantiate(_rectPrefab, new Vector3(_width / 2 - spriteSize.x / 2, _heigth / 2 - spriteSize.y / 2, 1), Quaternion.identity, transform);
+        _moveArea.GetComponent<SpriteRenderer>().size = new Vector2(_width + _moveAreaSize, _heigth + _moveAreaSize);
+        _moveArea.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
     }
 
     private void InstantiateObjects(bool[,] grid)
     {
         _objectGrid = new List<GameObject>();
 
-        // Move Area
-        GameObject moveArea = Instantiate(_moveAreaPrefab, new Vector3(grid.GetLength(1) / 2, grid.GetLength(0), 0), Quaternion.identity, transform);
-        moveArea.transform.localScale = new Vector3(grid.GetLength(1), 3.1f, 1);
-        _objectGrid.Add(moveArea);
-
         // Cells
         for (int i = 0; i < grid.GetLength(0); i++) {
             for (int j = 0; j < grid.GetLength(1); j++) {
                 if (grid[i, j]) {
-                    _objectGrid.Add(Instantiate(_bombHintPrefab, new Vector3(j, i, 0), Quaternion.identity, transform));
+                    GameObject bombHint = Instantiate(_bombHintPrefab, new Vector3(j, i, 0), Quaternion.identity, transform);
+                    bombHint.transform.localScale = new Vector3(_scale, _scale, 1);
+                    _objectGrid.Add(bombHint);
                 }
                 else {
-                    _objectGrid.Add(Instantiate(_unclickedPrefab, new Vector3(j, i, 0), Quaternion.identity, transform));
+                    GameObject unclickedPrefab = Instantiate(_unclickedPrefab, new Vector3(j, i, 0), Quaternion.identity, transform);
+                    unclickedPrefab.transform.localScale = new Vector3(_scale, _scale, 1);
+                    _objectGrid.Add(unclickedPrefab);
                 }
             }
         }
