@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO : SEPARATE LOGIC AND GRAPHICS
+
+
 public class Minesweeper : MonoBehaviour
 {
     public GameObject _unclickedPrefab;
@@ -84,19 +87,20 @@ public class Minesweeper : MonoBehaviour
     private void OnMouseEnter()
     {
         GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
-        _moveArea = Instantiate(_rectPrefab, new Vector3(transform.position.x + _width * _scale / 2 - _scale / 2, transform.position.y + _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
+
+        if (_moveArea == null)
+        {
+            _moveArea = Instantiate(_rectPrefab, new Vector3(transform.position.x + _width * _scale / 2 - _scale / 2, transform.position.y + _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
+        }
+
         _moveArea.GetComponent<SpriteRenderer>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
         _moveArea.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
     }
 
     private void OnMouseExit()
     {
-        if (!_followCursor)
-        {
-            Destroy(_moveArea);
-            _moveArea = null;
-            GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale, _heigth * _scale);
-        }
+        Debug.Log("exited, _followCursor : " + _followCursor);
+        CleanMoveArea();
     }
 
     private void InstantiateObjects(bool[,] grid)
@@ -156,5 +160,15 @@ public class Minesweeper : MonoBehaviour
             mousePos.x < transform.position.x + _width * _scale - _scale / 2 &&
             mousePos.y > transform.position.y &&
             mousePos.y < transform.position.y + _heigth * _scale - _scale / 2;    
+    }
+
+    private void CleanMoveArea()
+    {
+        if (!_followCursor)
+        {
+            Destroy(_moveArea);
+            _moveArea = null;
+            GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale, _heigth * _scale);
+        }
     }
 }
