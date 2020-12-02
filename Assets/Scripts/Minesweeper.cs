@@ -29,11 +29,26 @@ public class Minesweeper : MonoBehaviour
         InstantiateObjects(_grid);
         CenterCamera();
 
-        Vector2 spriteSize = _unclickedPrefab.GetComponent<SpriteRenderer>().size * _scale;
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        collider.size = new Vector2(_width * _scale, _heigth * _scale);
+        collider.offset = new Vector2(_width * _scale / 2 - _scale / 2, _heigth * _scale / 2 - _scale / 2);
 
+        // Vector2 spriteSize = _unclickedPrefab.GetComponent<SpriteRenderer>().size * _scale;
+    }
+
+    private void OnMouseEnter()
+    {
+        GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
         _moveArea = Instantiate(_rectPrefab, new Vector3(_width * _scale / 2 - _scale / 2, _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
         _moveArea.GetComponent<SpriteRenderer>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
         _moveArea.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
+    }
+
+    private void OnMouseExit()
+    {
+        Destroy(_moveArea);
+        _moveArea = null;
+        GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale, _heigth * _scale);
     }
 
     private void InstantiateObjects(bool[,] grid)
@@ -74,7 +89,7 @@ public class Minesweeper : MonoBehaviour
                 y = Mathf.FloorToInt(Random.value * _heigth);
             } while (grid[y,x]);
             grid[y,x] = true;
-            Debug.Log("Bomb at (" + x + ";" + y + ")");
+            //Debug.Log("Bomb at (" + x + ";" + y + ")");
         }
 
         return grid;
