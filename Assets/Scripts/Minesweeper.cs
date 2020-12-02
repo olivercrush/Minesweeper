@@ -53,7 +53,7 @@ public class Minesweeper : MonoBehaviour
         mousePos.z = 0.3f;
         mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
-        if (mousePos.x > transform.position.x && mousePos.x < transform.position.x + _width * _scale - _scale / 2 && mousePos.y > transform.position.y && mousePos.y < transform.position.y + _heigth * _scale - _scale / 2)
+        if (IsMouseOnMinesweeper(mousePos))
         {
             Debug.Log("in");
         }
@@ -61,7 +61,6 @@ public class Minesweeper : MonoBehaviour
         {
             Debug.Log("out");
         }
-        //Debug.Log(mousePos);
     }
 
     private void OnMouseUp()
@@ -144,5 +143,14 @@ public class Minesweeper : MonoBehaviour
     {
         _camera.transform.position = new Vector3(_grid.GetLength(1) / 2, _grid.GetLength(0) / 2, -_cameraDistance);
         _camera.GetComponent<Camera>().orthographicSize = _cameraDistance;
+    }
+
+    private bool IsMouseOnMinesweeper(Vector3 mousePos)
+    {
+        return
+            mousePos.x > transform.position.x &&
+            mousePos.x < transform.position.x + _width * _scale - _scale / 2 &&
+            mousePos.y > transform.position.y &&
+            mousePos.y < transform.position.y + _heigth * _scale - _scale / 2;    
     }
 }
