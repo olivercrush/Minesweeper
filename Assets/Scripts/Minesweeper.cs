@@ -22,6 +22,9 @@ public class Minesweeper : MonoBehaviour
     private List<GameObject> _objectGrid;
     private GameObject _moveArea;
 
+    private bool _followCursor = false;
+    private Vector3 _cursorOffset = Vector3.zero;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +37,36 @@ public class Minesweeper : MonoBehaviour
         collider.offset = new Vector2(_width * _scale / 2 - _scale / 2, _heigth * _scale / 2 - _scale / 2);
 
         // Vector2 spriteSize = _unclickedPrefab.GetComponent<SpriteRenderer>().size * _scale;
+    }
+
+    private void Update()
+    {
+        if (_followCursor && _cursorOffset != Vector3.zero)
+        {
+            transform.position = Input.mousePosition + _cursorOffset;
+        }
+    }
+
+    private void OnMouseDown()
+    {
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = 0.3f;
+        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+
+        if (mousePos.x > transform.position.x && mousePos.x < transform.position.x + _width * _scale && mousePos.y > transform.position.y && mousePos.y < transform.position.y + _heigth * _scale)
+        {
+            Debug.Log("in");
+        }
+        else
+        {
+            Debug.Log("out");
+        }
+        //Debug.Log(mousePos);
+    }
+
+    private void OnMouseUp()
+    {
+        
     }
 
     private void OnMouseEnter()
@@ -49,6 +82,18 @@ public class Minesweeper : MonoBehaviour
         Destroy(_moveArea);
         _moveArea = null;
         GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale, _heigth * _scale);
+    }
+
+    public void StartMinesweeperMove(Vector3 cursorOffset)
+    {
+        _cursorOffset = cursorOffset;
+        _followCursor = true;
+    }
+
+    public void StopMinesweeperMove()
+    {
+        _cursorOffset = Vector3.zero;
+        _followCursor = false;
     }
 
     private void InstantiateObjects(bool[,] grid)
