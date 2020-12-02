@@ -43,7 +43,12 @@ public class Minesweeper : MonoBehaviour
     {
         if (_followCursor && _cursorOffset != Vector3.zero)
         {
-            transform.position = Input.mousePosition + _cursorOffset;
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.z = 0.3f;
+            mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+
+            Debug.Log(mousePos - _cursorOffset);
+            transform.position = mousePos - _cursorOffset;
         }
     }
 
@@ -55,44 +60,43 @@ public class Minesweeper : MonoBehaviour
 
         if (IsMouseOnMinesweeper(mousePos))
         {
-            Debug.Log("in");
+
         }
         else
         {
-            Debug.Log("out");
+            if (!_followCursor)
+            {
+                _cursorOffset = mousePos - transform.position;
+                _followCursor = true;
+            }
         }
     }
 
     private void OnMouseUp()
     {
-        
+        if (_followCursor)
+        {
+            _followCursor = false;
+            _cursorOffset = Vector3.zero;
+        }
     }
 
     private void OnMouseEnter()
     {
         GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
-        _moveArea = Instantiate(_rectPrefab, new Vector3(_width * _scale / 2 - _scale / 2, _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
+        _moveArea = Instantiate(_rectPrefab, new Vector3(transform.position.x + _width * _scale / 2 - _scale / 2, transform.position.y + _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
         _moveArea.GetComponent<SpriteRenderer>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
         _moveArea.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
     }
 
     private void OnMouseExit()
     {
-        Destroy(_moveArea);
-        _moveArea = null;
-        GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale, _heigth * _scale);
-    }
-
-    public void StartMinesweeperMove(Vector3 cursorOffset)
-    {
-        _cursorOffset = cursorOffset;
-        _followCursor = true;
-    }
-
-    public void StopMinesweeperMove()
-    {
-        _cursorOffset = Vector3.zero;
-        _followCursor = false;
+        if (!_followCursor)
+        {
+            Destroy(_moveArea);
+            _moveArea = null;
+            GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale, _heigth * _scale);
+        }
     }
 
     private void InstantiateObjects(bool[,] grid)
