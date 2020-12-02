@@ -53,7 +53,7 @@ public class Minesweeper : MonoBehaviour
         mousePos.z = 0.3f;
         mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
-        if (mousePos.x > transform.position.x && mousePos.x < transform.position.x + _width * _scale && mousePos.y > transform.position.y && mousePos.y < transform.position.y + _heigth * _scale)
+        if (mousePos.x > transform.position.x && mousePos.x < transform.position.x + _width * _scale - _scale / 2 && mousePos.y > transform.position.y && mousePos.y < transform.position.y + _heigth * _scale - _scale / 2)
         {
             Debug.Log("in");
         }
