@@ -26,7 +26,6 @@ public class MinesweeperWindow : MonoBehaviour
 
     private Minesweeper _minesweeper;
 
-    // Start is called before the first frame update
     void Start()
     {
         _minesweeper = new Minesweeper(_width, _heigth, _bombCount);
@@ -84,7 +83,9 @@ public class MinesweeperWindow : MonoBehaviour
 
         if (IsMouseOnMinesweeper(mousePos))
         {
-
+            int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
+            int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
+            Debug.Log("clicked : " + x + "," + y);
         }
         else
         {
@@ -133,9 +134,9 @@ public class MinesweeperWindow : MonoBehaviour
     private bool IsMouseOnMinesweeper(Vector3 mousePos)
     {
         return
-            mousePos.x > transform.position.x &&
+            mousePos.x > transform.position.x - _scale / 2 &&
             mousePos.x < transform.position.x + _width * _scale - _scale / 2 &&
-            mousePos.y > transform.position.y &&
+            mousePos.y > transform.position.y - _scale / 2 &&
             mousePos.y < transform.position.y + _heigth * _scale - _scale / 2;
     }
 
