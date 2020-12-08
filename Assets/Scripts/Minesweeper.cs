@@ -2,130 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO : SEPARATE LOGIC AND GRAPHICS
-
-
-public class Minesweeper : MonoBehaviour
+public class Minesweeper
 {
-    public GameObject _unclickedPrefab;
-    public GameObject _bombHintPrefab;
-    public GameObject _rectPrefab;
-
-    public GameObject _camera;
-    public int _cameraDistance;
-
-    public int _width = 5;
-    public int _heigth = 5;
-    public int _bombCount = 5;
-
-    public float _scale = 1f;
-    public float _moveAreaSize = 2f;
-
     private bool[,] _grid;
-    private List<GameObject> _objectGrid;
-    private GameObject _moveArea;
 
-    private bool _followCursor = false;
-    private Vector3 _cursorOffset = Vector3.zero;
+    private int _width;
+    private int _heigth;
+    private int _bombCount;
 
     // Start is called before the first frame update
-    void Start()
+    public Minesweeper(int width, int height, int bombCount)
     {
-        _grid = GenerateGrid();
-        InstantiateObjects(_grid);
-        CenterCamera();
+        _width = width;
+        _heigth = height;
+        _bombCount = bombCount;
 
-        BoxCollider2D collider = GetComponent<BoxCollider2D>();
-        collider.size = new Vector2(_width * _scale, _heigth * _scale);
-        collider.offset = new Vector2(_width * _scale / 2 - _scale / 2, _heigth * _scale / 2 - _scale / 2);
-
-        // Vector2 spriteSize = _unclickedPrefab.GetComponent<SpriteRenderer>().size * _scale;
+        _grid = GenerateGrid(width, height, bombCount);
     }
 
-    private void Update()
+    public (int, int, int) GetGridInfos()
     {
-        if (_followCursor && _cursorOffset != Vector3.zero)
-        {
-            Vector3 mousePos = Input.mousePosition;
-            mousePos.z = 0.3f;
-            mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-
-            Debug.Log(mousePos - _cursorOffset);
-            transform.position = mousePos - _cursorOffset;
-        }
+        return (_width, _heigth, _bombCount);
     }
 
-    private void OnMouseDown()
+    public bool[,] GetGrid()
     {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 0.3f;
-        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-
-        if (IsMouseOnMinesweeper(mousePos))
-        {
-
-        }
-        else
-        {
-            if (!_followCursor)
-            {
-                _cursorOffset = mousePos - transform.position;
-                _followCursor = true;
-            }
-        }
+        return _grid;
     }
 
-    private void OnMouseUp()
+    private bool[,] GenerateGrid(int width, int height, int bombCount)
     {
-        if (_followCursor)
-        {
-            _followCursor = false;
-            _cursorOffset = Vector3.zero;
-        }
-    }
-
-    private void OnMouseEnter()
-    {
-        GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
-
-        if (_moveArea == null)
-        {
-            _moveArea = Instantiate(_rectPrefab, new Vector3(transform.position.x + _width * _scale / 2 - _scale / 2, transform.position.y + _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
-        }
-
-        _moveArea.GetComponent<SpriteRenderer>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
-        _moveArea.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
-    }
-
-    private void OnMouseExit()
-    {
-        Debug.Log("exited, _followCursor : " + _followCursor);
-        CleanMoveArea();
-    }
-
-    private void InstantiateObjects(bool[,] grid)
-    {
-        _objectGrid = new List<GameObject>();
-
-        // Cells
-        for (int i = 0; i < grid.GetLength(0); i++) {
-            for (int j = 0; j < grid.GetLength(1); j++) {
-                if (grid[i, j]) {
-                    GameObject bombHint = Instantiate(_bombHintPrefab, new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
-                    bombHint.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
-                    _objectGrid.Add(bombHint);
-                }
-                else {
-                    GameObject unclickedPrefab = Instantiate(_unclickedPrefab, new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
-                    unclickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
-                    _objectGrid.Add(unclickedPrefab);
-                }
-            }
-        }
-    }
-
-    private bool[,] GenerateGrid() {
-        bool[,] grid = new bool[_heigth,_width];
+        bool[,] grid = new bool[height, width];
         
         for (int i = 0; i < grid.GetLength(0); i++) {
             for (int j = 0; j < grid.GetLength(1); j++) {
@@ -137,38 +44,13 @@ public class Minesweeper : MonoBehaviour
             int x, y;
             do
             {
-                x = Mathf.FloorToInt(Random.value * _width);
-                y = Mathf.FloorToInt(Random.value * _heigth);
+                x = Mathf.FloorToInt(Random.value * width);
+                y = Mathf.FloorToInt(Random.value * height);
             } while (grid[y,x]);
             grid[y,x] = true;
             //Debug.Log("Bomb at (" + x + ";" + y + ")");
         }
 
         return grid;
-    }
-
-    private void CenterCamera()
-    {
-        _camera.transform.position = new Vector3(_grid.GetLength(1) / 2, _grid.GetLength(0) / 2, -_cameraDistance);
-        _camera.GetComponent<Camera>().orthographicSize = _cameraDistance;
-    }
-
-    private bool IsMouseOnMinesweeper(Vector3 mousePos)
-    {
-        return
-            mousePos.x > transform.position.x &&
-            mousePos.x < transform.position.x + _width * _scale - _scale / 2 &&
-            mousePos.y > transform.position.y &&
-            mousePos.y < transform.position.y + _heigth * _scale - _scale / 2;    
-    }
-
-    private void CleanMoveArea()
-    {
-        if (!_followCursor)
-        {
-            Destroy(_moveArea);
-            _moveArea = null;
-            GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale, _heigth * _scale);
-        }
     }
 }
