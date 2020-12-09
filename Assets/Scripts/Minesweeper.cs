@@ -30,6 +30,11 @@ public class Minesweeper
         return _grid;
     }
 
+    public bool DiscoverCell(int x, int y)
+    {
+        return _grid[y, x];
+    }
+
     private bool[,] GenerateGrid(int width, int height, int bombCount)
     {
         bool[,] grid = new bool[height, width];

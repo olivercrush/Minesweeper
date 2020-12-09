@@ -85,7 +85,9 @@ public class MinesweeperWindow : MonoBehaviour
         {
             int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
             int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
-            Debug.Log("clicked : " + x + "," + y);
+            
+            // Debug.Log(_minesweeper.DiscoverCell(x, y));
+            // Debug.Log("clicked : " + x + "," + y);
         }
         else
         {
