@@ -5,6 +5,7 @@ using UnityEngine;
 public class MinesweeperWindow : MonoBehaviour
 {
     public GameObject _unclickedPrefab;
+    public GameObject _clickedPrefab;
     public GameObject _bombHintPrefab;
     public GameObject _rectPrefab;
 
@@ -18,7 +19,7 @@ public class MinesweeperWindow : MonoBehaviour
     public float _scale = 1f;
     public float _moveAreaSize = 2f;
 
-    private List<GameObject> _objectGrid;
+    private GameObject[,] _objectGrid;
     private GameObject _moveArea;
 
     private bool _followCursor = false;
@@ -39,7 +40,7 @@ public class MinesweeperWindow : MonoBehaviour
 
     private void InstantiateObjects(bool[,] grid)
     {
-        _objectGrid = new List<GameObject>();
+        _objectGrid = new GameObject[_heigth, _width];
 
         // Cells
         for (int i = 0; i < grid.GetLength(0); i++)
@@ -50,13 +51,13 @@ public class MinesweeperWindow : MonoBehaviour
                 {
                     GameObject bombHint = Instantiate(_bombHintPrefab, new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
                     bombHint.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
-                    _objectGrid.Add(bombHint);
+                    _objectGrid[i, j] = bombHint;
                 }
                 else
                 {
                     GameObject unclickedPrefab = Instantiate(_unclickedPrefab, new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
                     unclickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
-                    _objectGrid.Add(unclickedPrefab);
+                    _objectGrid[i, j] = unclickedPrefab;
                 }
             }
         }
@@ -86,6 +87,14 @@ public class MinesweeperWindow : MonoBehaviour
             int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
             int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
             
+            if (!_minesweeper.DiscoverCell(x, y).Item1)
+            {
+                Destroy(_objectGrid[y, x]);
+                GameObject clickedPrefab = Instantiate(_clickedPrefab, new Vector3(x * _scale, y * _scale, 0), Quaternion.identity, transform);
+                clickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
+                _objectGrid[y, x] = clickedPrefab;
+            }
+
             // Debug.Log(_minesweeper.DiscoverCell(x, y));
             // Debug.Log("clicked : " + x + "," + y);
         }

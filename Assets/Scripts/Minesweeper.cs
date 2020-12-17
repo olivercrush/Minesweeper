@@ -20,19 +20,15 @@ public class Minesweeper
         _grid = GenerateGrid(width, height, bombCount);
     }
 
-    public (int, int, int) GetGridInfos()
-    {
-        return (_width, _heigth, _bombCount);
-    }
-
     public bool[,] GetGrid()
     {
         return _grid;
     }
 
-    public bool DiscoverCell(int x, int y)
+    public (bool, int) DiscoverCell(int x, int y)
     {
-        return _grid[y, x];
+        // bombed, number of neighbors
+        return (_grid[y, x], 0);
     }
 
     private bool[,] GenerateGrid(int width, int height, int bombCount)
