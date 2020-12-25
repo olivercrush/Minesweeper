@@ -90,7 +90,8 @@ public class MinesweeperWindow : MonoBehaviour
             if (!_minesweeper.DiscoverCell(x, y).Item1)
             {
                 Destroy(_objectGrid[y, x]);
-                GameObject clickedPrefab = Instantiate(_clickedPrefab, new Vector3(x * _scale, y * _scale, 0), Quaternion.identity, transform);
+                GameObject clickedPrefab = Instantiate(_clickedPrefab, new Vector3(0, 0, 0), Quaternion.identity, transform);
+                clickedPrefab.transform.localPosition = new Vector3(x * _scale, y * _scale, 0);
                 clickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
                 _objectGrid[y, x] = clickedPrefab;
             }
