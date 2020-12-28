@@ -86,14 +86,13 @@ public class MinesweeperWindow : MonoBehaviour
         {
             int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
             int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
-            
-            if (!_minesweeper.DiscoverCell(x, y).Item1)
+
+            List<(int, int, int)> discoveredCells = _minesweeper.DiscoverCell(x, y);
+            //Debug.Log(discoveredCells.Count);
+            for (int i = 0; i < discoveredCells.Count; i++)
             {
-                Destroy(_objectGrid[y, x]);
-                GameObject clickedPrefab = Instantiate(_clickedPrefab, new Vector3(0, 0, 0), Quaternion.identity, transform);
-                clickedPrefab.transform.localPosition = new Vector3(x * _scale, y * _scale, 0);
-                clickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
-                _objectGrid[y, x] = clickedPrefab;
+                (int, int, int) cell = discoveredCells[i];
+                DiscoverCell(cell.Item1, cell.Item2, cell.Item3);
             }
 
             // Debug.Log(_minesweeper.DiscoverCell(x, y));
@@ -107,6 +106,15 @@ public class MinesweeperWindow : MonoBehaviour
                 _followCursor = true;
             }
         }
+    }
+
+    private void DiscoverCell(int x, int y, int bombs)
+    {
+        Destroy(_objectGrid[y, x]);
+        GameObject clickedPrefab = Instantiate(_clickedPrefab, new Vector3(0, 0, 0), Quaternion.identity, transform);
+        clickedPrefab.transform.localPosition = new Vector3(x * _scale, y * _scale, 0);
+        clickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
+        _objectGrid[y, x] = clickedPrefab;
     }
 
     private void OnMouseUp()

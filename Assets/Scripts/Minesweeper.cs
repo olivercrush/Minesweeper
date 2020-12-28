@@ -5,6 +5,7 @@ using UnityEngine;
 public class Minesweeper
 {
     private bool[,] _grid;
+    private bool[,] _coverage;
 
     private int _width;
     private int _heigth;
@@ -18,6 +19,7 @@ public class Minesweeper
         _bombCount = bombCount;
 
         _grid = GenerateGrid(width, height, bombCount);
+        _coverage = GenerateCoverage(width, height);
     }
 
     public bool[,] GetGrid()
@@ -25,10 +27,53 @@ public class Minesweeper
         return _grid;
     }
 
-    public (bool, int) DiscoverCell(int x, int y)
+    public List<(int, int, int)> DiscoverCell(int x, int y)
     {
-        // bombed, number of neighbors
-        return (_grid[y, x], 0);
+        _coverage[y, x] = true;
+        List<(int, int, int)> discoveredCells = new List<(int, int, int)>();
+
+        int adjacentBombCount = GetAdjacentBombsCount(x, y);
+        discoveredCells.Add((x, y, adjacentBombCount));
+
+        if (adjacentBombCount == 0)
+        {
+            for (int i = y - 1; i <= y + 1; i++) {
+                for (int j = x - 1; j <= x + 1; j++) {
+
+                    if (i >= 0 && i < _heigth && j >= 0 && j < _width && !(i == y && j == x) && !_coverage[i, j])
+                    {
+                        if (GetAdjacentBombsCount(j, i) == 0)
+                        {
+                            List<(int, int, int)> tmp = DiscoverCell(j, i);
+                            Debug.Log(tmp.Count);
+                            foreach ((int, int, int) discoveredCell in tmp)
+                            {
+                                discoveredCells.Add(discoveredCell);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return discoveredCells;
+    }
+
+    private int GetAdjacentBombsCount(int x, int y)
+    {
+        int count = 0;
+
+        for (int i = y - 1; i <= y + 1; i++) {
+            for (int j = x - 1; j <= x + 1; j++) {
+                if (i >= 0 && i < _heigth && j >= 0 && j < _width && !(i == y && j == x) && _grid[i, j])
+                {
+                    count++;
+                }
+            }
+        }
+
+        return count;
     }
 
     private bool[,] GenerateGrid(int width, int height, int bombCount)
@@ -53,5 +98,18 @@ public class Minesweeper
         }
 
         return grid;
+    }
+
+    private bool[,] GenerateCoverage(int width, int height)
+    {
+        bool[,] coverage = new bool[height, width];
+
+        for (int i = 0; i < coverage.GetLength(0); i++) {
+            for (int j = 0; j < coverage.GetLength(1); j++) {
+                coverage[i, j] = false;
+            }
+        }
+
+        return coverage;
     }
 }
