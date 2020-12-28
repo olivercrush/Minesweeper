@@ -40,7 +40,7 @@ public class Minesweeper
             for (int i = y - 1; i <= y + 1; i++) {
                 for (int j = x - 1; j <= x + 1; j++) {
 
-                    if (i >= 0 && i < _heigth && j >= 0 && j < _width && !(i == y && j == x) && !_coverage[i, j])
+                    if (IsValidCell(j, i))
                     {
                         if (GetAdjacentBombsCount(j, i) == 0)
                         {
@@ -58,6 +58,11 @@ public class Minesweeper
         }
 
         return discoveredCells;
+    }
+
+    private bool IsValidCell(int x, int y)
+    {
+        return y >= 0 && y < _heigth && x >= 0 && x < _width && !_coverage[y, x];
     }
 
     private int GetAdjacentBombsCount(int x, int y)
