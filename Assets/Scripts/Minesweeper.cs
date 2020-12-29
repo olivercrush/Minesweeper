@@ -40,39 +40,28 @@ public class Minesweeper
 
             if (adjacentBombCount == 0)
             {
-                if (GetAdjacentBombsCount(x - 1, y) == 0) {
-                    List<(int, int, int)> tmp = DiscoverCell(x - 1, y);
-                    foreach ((int, int, int) discoveredCell in tmp)
-                    {
-                        discoveredCells.Add(discoveredCell);
-                    }
+                List<(int, int, int)> west = DiscoverCell(x - 1, y);
+                foreach ((int, int, int) discoveredCell in west)
+                {
+                    discoveredCells.Add(discoveredCell);
                 }
 
-                if (GetAdjacentBombsCount(x + 1, y) == 0)
+                List<(int, int, int)> east = DiscoverCell(x + 1, y);
+                foreach ((int, int, int) discoveredCell in east)
                 {
-                    List<(int, int, int)> tmp = DiscoverCell(x + 1, y);
-                    foreach ((int, int, int) discoveredCell in tmp)
-                    {
-                        discoveredCells.Add(discoveredCell);
-                    }
+                    discoveredCells.Add(discoveredCell);
                 }
 
-                if (GetAdjacentBombsCount(x, y - 1) == 0)
+                List<(int, int, int)> north = DiscoverCell(x, y - 1);
+                foreach ((int, int, int) discoveredCell in north)
                 {
-                    List<(int, int, int)> tmp = DiscoverCell(x, y - 1);
-                    foreach ((int, int, int) discoveredCell in tmp)
-                    {
-                        discoveredCells.Add(discoveredCell);
-                    }
+                    discoveredCells.Add(discoveredCell);
                 }
 
-                if (GetAdjacentBombsCount(x, y + 1) == 0)
+                List<(int, int, int)> south = DiscoverCell(x, y + 1);
+                foreach ((int, int, int) discoveredCell in south)
                 {
-                    List<(int, int, int)> tmp = DiscoverCell(x, y + 1);
-                    foreach ((int, int, int) discoveredCell in tmp)
-                    {
-                        discoveredCells.Add(discoveredCell);
-                    }
+                    discoveredCells.Add(discoveredCell);
                 }
             }
 
