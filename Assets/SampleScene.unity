@@ -250,7 +250,7 @@ MonoBehaviour:
   _rectPrefab: {fileID: 3473560057225312995, guid: 82d2e8684938f194c95123c06a9ca3aa, type: 3}
   _width: 20
   _heigth: 10
-  _bombCount: 60
+  _bombCount: 20
   _camera: {fileID: 519420028}
   _cameraDistance: 15
   _scale: 1

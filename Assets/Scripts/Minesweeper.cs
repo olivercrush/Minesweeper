@@ -40,24 +40,38 @@ public class Minesweeper
 
             if (adjacentBombCount == 0)
             {
-                for (int i = y - 1; i <= y + 1; i++)
-                {
-                    for (int j = x - 1; j <= x + 1; j++)
+                if (GetAdjacentBombsCount(x - 1, y) == 0) {
+                    List<(int, int, int)> tmp = DiscoverCell(x - 1, y);
+                    foreach ((int, int, int) discoveredCell in tmp)
                     {
+                        discoveredCells.Add(discoveredCell);
+                    }
+                }
 
-                        if (IsValidCell(j, i))
-                        {
-                            if (GetAdjacentBombsCount(j, i) == 0)
-                            {
-                                List<(int, int, int)> tmp = DiscoverCell(j, i);
-                                Debug.Log(tmp.Count);
-                                foreach ((int, int, int) discoveredCell in tmp)
-                                {
-                                    discoveredCells.Add(discoveredCell);
-                                }
-                            }
-                        }
+                if (GetAdjacentBombsCount(x + 1, y) == 0)
+                {
+                    List<(int, int, int)> tmp = DiscoverCell(x + 1, y);
+                    foreach ((int, int, int) discoveredCell in tmp)
+                    {
+                        discoveredCells.Add(discoveredCell);
+                    }
+                }
 
+                if (GetAdjacentBombsCount(x, y - 1) == 0)
+                {
+                    List<(int, int, int)> tmp = DiscoverCell(x, y - 1);
+                    foreach ((int, int, int) discoveredCell in tmp)
+                    {
+                        discoveredCells.Add(discoveredCell);
+                    }
+                }
+
+                if (GetAdjacentBombsCount(x, y + 1) == 0)
+                {
+                    List<(int, int, int)> tmp = DiscoverCell(x, y + 1);
+                    foreach ((int, int, int) discoveredCell in tmp)
+                    {
+                        discoveredCells.Add(discoveredCell);
                     }
                 }
             }
