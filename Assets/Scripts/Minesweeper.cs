@@ -27,7 +27,7 @@ public class Minesweeper
         return _bombs;
     }
 
-    public List<(int, int, int)> DiscoverCell(int x, int y)
+    public List<(int, int, int)> DiscoverCell(int x, int y, int level)
     {
         List<(int, int, int)> discoveredCells = new List<(int, int, int)>();
 
@@ -40,31 +40,59 @@ public class Minesweeper
 
             if (adjacentBombCount == 0)
             {
-                List<(int, int, int)> west = DiscoverCell(x - 1, y);
+                List<(int, int, int)> west = DiscoverCell(x - 1, y, 1);
                 foreach ((int, int, int) discoveredCell in west)
                 {
                     discoveredCells.Add(discoveredCell);
                 }
 
-                List<(int, int, int)> east = DiscoverCell(x + 1, y);
+                List<(int, int, int)> east = DiscoverCell(x + 1, y, 1);
                 foreach ((int, int, int) discoveredCell in east)
                 {
                     discoveredCells.Add(discoveredCell);
                 }
 
-                List<(int, int, int)> north = DiscoverCell(x, y - 1);
+                List<(int, int, int)> north = DiscoverCell(x, y - 1, 1);
                 foreach ((int, int, int) discoveredCell in north)
                 {
                     discoveredCells.Add(discoveredCell);
                 }
 
-                List<(int, int, int)> south = DiscoverCell(x, y + 1);
+                List<(int, int, int)> south = DiscoverCell(x, y + 1, 1);
                 foreach ((int, int, int) discoveredCell in south)
+                {
+                    discoveredCells.Add(discoveredCell);
+                }
+
+                List<(int, int, int)> northwest = DiscoverCell(x - 1, y + 1, 1);
+                foreach ((int, int, int) discoveredCell in northwest)
+                {
+                    discoveredCells.Add(discoveredCell);
+                }
+
+                List<(int, int, int)> northeast = DiscoverCell(x + 1, y + 1, 1);
+                foreach ((int, int, int) discoveredCell in northeast)
+                {
+                    discoveredCells.Add(discoveredCell);
+                }
+
+                List<(int, int, int)> southwest = DiscoverCell(x - 1, y - 1, 1);
+                foreach ((int, int, int) discoveredCell in southwest)
+                {
+                    discoveredCells.Add(discoveredCell);
+                }
+
+                List<(int, int, int)> southeast = DiscoverCell(x + 1, y - 1, 1);
+                foreach ((int, int, int) discoveredCell in southeast)
                 {
                     discoveredCells.Add(discoveredCell);
                 }
             }
 
+        }
+        else if (level == 0 && _bombs[y, x])
+        {
+            discoveredCells.Add((x, y, -1));
         }
 
         return discoveredCells;

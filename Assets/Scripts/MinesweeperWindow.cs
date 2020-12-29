@@ -5,15 +5,15 @@ using UnityEngine;
 public class MinesweeperWindow : MonoBehaviour
 {
     public GameObject _unclickedPrefab;
-    public GameObject _ZeroPrefab;
-    public GameObject _OnePrefab;
-    public GameObject _TwoPrefab;
-    public GameObject _ThreePrefab;
-    public GameObject _FourPrefab;
-    public GameObject _FivePrefab;
-    public GameObject _SixPrefab;
-    public GameObject _SevenPrefab;
-    public GameObject _EightPrefab;
+    public GameObject _zeroPrefab;
+    public GameObject _onePrefab;
+    public GameObject _twoPrefab;
+    public GameObject _threePrefab;
+    public GameObject _fourPrefab;
+    public GameObject _fivePrefab;
+    public GameObject _sixPrefab;
+    public GameObject _sevenPrefab;
+    public GameObject _eightPrefab;
 
     public GameObject _bombHintPrefab;
     public GameObject _rectPrefab;
@@ -56,18 +56,9 @@ public class MinesweeperWindow : MonoBehaviour
         {
             for (int j = 0; j < grid.GetLength(1); j++)
             {
-                if (grid[i, j])
-                {
-                    GameObject bombHint = Instantiate(_bombHintPrefab, new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
-                    bombHint.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
-                    _objectGrid[i, j] = bombHint;
-                }
-                else
-                {
-                    GameObject unclickedPrefab = Instantiate(_unclickedPrefab, new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
-                    unclickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
-                    _objectGrid[i, j] = unclickedPrefab;
-                }
+                GameObject unclickedPrefab = Instantiate(_unclickedPrefab, new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
+                unclickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
+                _objectGrid[i, j] = unclickedPrefab;
             }
         }
     }
@@ -96,7 +87,7 @@ public class MinesweeperWindow : MonoBehaviour
             int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
             int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
 
-            List<(int, int, int)> discoveredCells = _minesweeper.DiscoverCell(x, y);
+            List<(int, int, int)> discoveredCells = _minesweeper.DiscoverCell(x, y, 0);
             //Debug.Log(discoveredCells.Count);
             for (int i = 0; i < discoveredCells.Count; i++)
             {
@@ -183,35 +174,38 @@ public class MinesweeperWindow : MonoBehaviour
     {
         switch (bombs)
         {
+            case -1:
+                return _bombHintPrefab;
+
             case 0:
-                return _ZeroPrefab;
+                return _zeroPrefab;
 
             case 1:
-                return _OnePrefab;
+                return _onePrefab;
 
             case 2:
-                return _TwoPrefab;
+                return _twoPrefab;
 
             case 3:
-                return _ThreePrefab;
+                return _threePrefab;
 
             case 4:
-                return _FourPrefab;
+                return _fourPrefab;
 
             case 5:
-                return _FivePrefab;
+                return _fivePrefab;
 
             case 6:
-                return _SixPrefab;
+                return _sixPrefab;
 
             case 7:
-                return _SevenPrefab;
+                return _sevenPrefab;
 
             case 8:
-                return _EightPrefab;
+                return _eightPrefab;
 
             default:
-                return _ZeroPrefab;
+                return _zeroPrefab;
         }
     }
 }
