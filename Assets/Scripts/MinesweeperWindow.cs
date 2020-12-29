@@ -5,7 +5,16 @@ using UnityEngine;
 public class MinesweeperWindow : MonoBehaviour
 {
     public GameObject _unclickedPrefab;
-    public GameObject _clickedPrefab;
+    public GameObject _ZeroPrefab;
+    public GameObject _OnePrefab;
+    public GameObject _TwoPrefab;
+    public GameObject _ThreePrefab;
+    public GameObject _FourPrefab;
+    public GameObject _FivePrefab;
+    public GameObject _SixPrefab;
+    public GameObject _SevenPrefab;
+    public GameObject _EightPrefab;
+
     public GameObject _bombHintPrefab;
     public GameObject _rectPrefab;
 
@@ -111,7 +120,7 @@ public class MinesweeperWindow : MonoBehaviour
     private void DiscoverCell(int x, int y, int bombs)
     {
         Destroy(_objectGrid[y, x]);
-        GameObject clickedPrefab = Instantiate(_clickedPrefab, new Vector3(0, 0, 0), Quaternion.identity, transform);
+        GameObject clickedPrefab = Instantiate(GetCellPrefab(bombs), new Vector3(0, 0, 0), Quaternion.identity, transform);
         clickedPrefab.transform.localPosition = new Vector3(x * _scale, y * _scale, 0);
         clickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
         _objectGrid[y, x] = clickedPrefab;
@@ -167,6 +176,42 @@ public class MinesweeperWindow : MonoBehaviour
             Destroy(_moveArea);
             _moveArea = null;
             GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale, _heigth * _scale);
+        }
+    }
+
+    private GameObject GetCellPrefab(int bombs)
+    {
+        switch (bombs)
+        {
+            case 0:
+                return _ZeroPrefab;
+
+            case 1:
+                return _OnePrefab;
+
+            case 2:
+                return _TwoPrefab;
+
+            case 3:
+                return _ThreePrefab;
+
+            case 4:
+                return _FourPrefab;
+
+            case 5:
+                return _FivePrefab;
+
+            case 6:
+                return _SixPrefab;
+
+            case 7:
+                return _SevenPrefab;
+
+            case 8:
+                return _EightPrefab;
+
+            default:
+                return _ZeroPrefab;
         }
     }
 }

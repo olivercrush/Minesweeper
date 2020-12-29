@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Minesweeper
 {
-    private bool[,] _grid;
+    private bool[,] _bombs;
     private bool[,] _coverage;
 
     private int _width;
@@ -18,43 +18,50 @@ public class Minesweeper
         _heigth = height;
         _bombCount = bombCount;
 
-        _grid = GenerateGrid(width, height, bombCount);
+        _bombs = GenerateGrid(width, height, bombCount);
         _coverage = GenerateCoverage(width, height);
     }
 
     public bool[,] GetGrid()
     {
-        return _grid;
+        return _bombs;
     }
 
     public List<(int, int, int)> DiscoverCell(int x, int y)
     {
-        _coverage[y, x] = true;
         List<(int, int, int)> discoveredCells = new List<(int, int, int)>();
 
-        int adjacentBombCount = GetAdjacentBombsCount(x, y);
-        discoveredCells.Add((x, y, adjacentBombCount));
-
-        if (adjacentBombCount == 0)
+        if (IsValidCell(x, y))
         {
-            for (int i = y - 1; i <= y + 1; i++) {
-                for (int j = x - 1; j <= x + 1; j++) {
+            _coverage[y, x] = true;
 
-                    if (IsValidCell(j, i))
+            int adjacentBombCount = GetAdjacentBombsCount(x, y);
+            discoveredCells.Add((x, y, adjacentBombCount));
+
+            if (adjacentBombCount == 0)
+            {
+                for (int i = y - 1; i <= y + 1; i++)
+                {
+                    for (int j = x - 1; j <= x + 1; j++)
                     {
-                        if (GetAdjacentBombsCount(j, i) == 0)
+
+                        if (IsValidCell(j, i))
                         {
-                            List<(int, int, int)> tmp = DiscoverCell(j, i);
-                            Debug.Log(tmp.Count);
-                            foreach ((int, int, int) discoveredCell in tmp)
+                            if (GetAdjacentBombsCount(j, i) == 0)
                             {
-                                discoveredCells.Add(discoveredCell);
+                                List<(int, int, int)> tmp = DiscoverCell(j, i);
+                                Debug.Log(tmp.Count);
+                                foreach ((int, int, int) discoveredCell in tmp)
+                                {
+                                    discoveredCells.Add(discoveredCell);
+                                }
                             }
                         }
-                    }
 
+                    }
                 }
             }
+
         }
 
         return discoveredCells;
@@ -62,7 +69,7 @@ public class Minesweeper
 
     private bool IsValidCell(int x, int y)
     {
-        return y >= 0 && y < _heigth && x >= 0 && x < _width && !_coverage[y, x];
+        return y >= 0 && y < _heigth && x >= 0 && x < _width && !_coverage[y, x] && !_bombs[y, x];
     }
 
     private int GetAdjacentBombsCount(int x, int y)
@@ -71,7 +78,7 @@ public class Minesweeper
 
         for (int i = y - 1; i <= y + 1; i++) {
             for (int j = x - 1; j <= x + 1; j++) {
-                if (i >= 0 && i < _heigth && j >= 0 && j < _width && !(i == y && j == x) && _grid[i, j])
+                if (i >= 0 && i < _heigth && j >= 0 && j < _width && !(i == y && j == x) && _bombs[i, j])
                 {
                     count++;
                 }
