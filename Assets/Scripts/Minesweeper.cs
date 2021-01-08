@@ -27,6 +27,32 @@ public class Minesweeper
         return _bombs;
     }
 
+    public List<(int, int, int)> DiscoverFirstCell(int x, int y)
+    {
+        if (_bombs[y, x])
+        {
+            ReplaceBomb(x, y);
+        }
+
+        return DiscoverCell(x, y, 0);
+    }
+
+    public void ReplaceBomb(int x, int y)
+    {
+        _bombs[y, x] = false;
+
+        int newX;
+        int newY;
+
+        do
+        {
+            newX = Mathf.FloorToInt(Random.value * _width);
+            newY = Mathf.FloorToInt(Random.value * _heigth);
+        } while (_bombs[newY, newX]);
+
+        _bombs[newY, newX] = true;
+    }
+
     public List<(int, int, int)> DiscoverCell(int x, int y, int level)
     {
         List<(int, int, int)> discoveredCells = new List<(int, int, int)>();
@@ -94,9 +120,9 @@ public class Minesweeper
         return count;
     }
 
-    private bool[,] GenerateGrid(int width, int height, int bombCount)
+    private bool[,] GenerateGrid(int width, int heigth, int bombCount)
     {
-        bool[,] grid = new bool[height, width];
+        bool[,] grid = new bool[heigth, width];
         
         for (int i = 0; i < grid.GetLength(0); i++) {
             for (int j = 0; j < grid.GetLength(1); j++) {
@@ -109,7 +135,7 @@ public class Minesweeper
             do
             {
                 x = Mathf.FloorToInt(Random.value * width);
-                y = Mathf.FloorToInt(Random.value * height);
+                y = Mathf.FloorToInt(Random.value * heigth);
             } while (grid[y,x]);
             grid[y,x] = true;
             //Debug.Log("Bomb at (" + x + ";" + y + ")");

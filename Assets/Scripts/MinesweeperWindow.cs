@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MinesweeperWindow : MonoBehaviour
 {
+    // TODO : replace this with array to improve readability
     public GameObject _unclickedPrefab;
     public GameObject _zeroPrefab;
     public GameObject _onePrefab;
@@ -30,6 +31,8 @@ public class MinesweeperWindow : MonoBehaviour
 
     private GameObject[,] _objectGrid;
     private GameObject _moveArea;
+
+    private bool firstMoveDone = false;
 
     private bool _followCursor = false;
     private Vector3 _cursorOffset = Vector3.zero;
@@ -87,7 +90,12 @@ public class MinesweeperWindow : MonoBehaviour
             int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
             int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
 
-            List<(int, int, int)> discoveredCells = _minesweeper.DiscoverCell(x, y, 0);
+            List<(int, int, int)> discoveredCells = firstMoveDone ? _minesweeper.DiscoverCell(x, y, 0) : _minesweeper.DiscoverFirstCell(x, y);
+            if (!firstMoveDone)
+            {
+                firstMoveDone = true;
+            }
+
             //Debug.Log(discoveredCells.Count);
             for (int i = 0; i < discoveredCells.Count; i++)
             {
