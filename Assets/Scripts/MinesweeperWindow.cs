@@ -42,7 +42,7 @@ public class MinesweeperWindow : MonoBehaviour
     void Start()
     {
         _minesweeper = new Minesweeper(_width, _heigth, _bombCount);
-        InstantiateObjects(_minesweeper.GetGrid());
+        InstantiateObjects(_minesweeper.GetBombs());
         CenterCamera();
 
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
