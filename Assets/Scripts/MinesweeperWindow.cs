@@ -2,22 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+enum GamePrefab
+{
+    ZeroPrefab,
+    OnePrefab,
+    TwoPrefab,
+    ThreePrefab,
+    FourPrefab,
+    FivePrefab,
+    SixPrefab,
+    SevenPrefab,
+    EigthPrefab,
+    BombPrefab,
+    RectPrefab,
+    UnclickedPrefab
+}
+
 public class MinesweeperWindow : MonoBehaviour
 {
-    // TODO : replace this with array to improve readability
-    public GameObject _unclickedPrefab;
-    public GameObject _zeroPrefab;
-    public GameObject _onePrefab;
-    public GameObject _twoPrefab;
-    public GameObject _threePrefab;
-    public GameObject _fourPrefab;
-    public GameObject _fivePrefab;
-    public GameObject _sixPrefab;
-    public GameObject _sevenPrefab;
-    public GameObject _eightPrefab;
-
-    public GameObject _bombHintPrefab;
-    public GameObject _rectPrefab;
+    // TODO : find better way to store prefabs (maybe create dedicated class)
+    public GameObject[] _prefabs;
 
     public int _width = 5;
     public int _heigth = 5;
@@ -59,7 +63,7 @@ public class MinesweeperWindow : MonoBehaviour
         {
             for (int j = 0; j < grid.GetLength(1); j++)
             {
-                GameObject unclickedPrefab = Instantiate(_unclickedPrefab, new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
+                GameObject unclickedPrefab = Instantiate(_prefabs[(int) GamePrefab.UnclickedPrefab], new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
                 unclickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
                 _objectGrid[i, j] = unclickedPrefab;
             }
@@ -119,7 +123,7 @@ public class MinesweeperWindow : MonoBehaviour
     private void DiscoverCell(int x, int y, int bombs)
     {
         Destroy(_objectGrid[y, x]);
-        GameObject clickedPrefab = Instantiate(GetCellPrefab(bombs), new Vector3(0, 0, 0), Quaternion.identity, transform);
+        GameObject clickedPrefab = Instantiate(_prefabs[bombs], new Vector3(0, 0, 0), Quaternion.identity, transform);
         clickedPrefab.transform.localPosition = new Vector3(x * _scale, y * _scale, 0);
         clickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
         _objectGrid[y, x] = clickedPrefab;
@@ -140,7 +144,7 @@ public class MinesweeperWindow : MonoBehaviour
 
         if (_moveArea == null)
         {
-            _moveArea = Instantiate(_rectPrefab, new Vector3(transform.position.x + _width * _scale / 2 - _scale / 2, transform.position.y + _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
+            _moveArea = Instantiate(_prefabs[(int) GamePrefab.RectPrefab], new Vector3(transform.position.x + _width * _scale / 2 - _scale / 2, transform.position.y + _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
         }
 
         _moveArea.GetComponent<SpriteRenderer>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
@@ -175,45 +179,6 @@ public class MinesweeperWindow : MonoBehaviour
             Destroy(_moveArea);
             _moveArea = null;
             GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale, _heigth * _scale);
-        }
-    }
-
-    private GameObject GetCellPrefab(int bombs)
-    {
-        switch (bombs)
-        {
-            case -1:
-                return _bombHintPrefab;
-
-            case 0:
-                return _zeroPrefab;
-
-            case 1:
-                return _onePrefab;
-
-            case 2:
-                return _twoPrefab;
-
-            case 3:
-                return _threePrefab;
-
-            case 4:
-                return _fourPrefab;
-
-            case 5:
-                return _fivePrefab;
-
-            case 6:
-                return _sixPrefab;
-
-            case 7:
-                return _sevenPrefab;
-
-            case 8:
-                return _eightPrefab;
-
-            default:
-                return _zeroPrefab;
         }
     }
 }

@@ -67,7 +67,7 @@ public class Minesweeper
         }
         else if (level == 0 && _grid.GetBombs()[y, x])
         {
-            discoveredCells.Add((x, y, -1));
+            discoveredCells.Add((x, y, 9));
         }
 
         return discoveredCells;
