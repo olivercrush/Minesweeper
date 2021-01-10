@@ -20,7 +20,7 @@ enum GamePrefab
 
 public class MinesweeperWindow : MonoBehaviour
 {
-    // TODO : find better way to store prefabs (maybe create dedicated class)
+    // TODO : find better way to store prefabs (maybe create dedicated class ! FACTORY !)
     public GameObject[] _prefabs;
 
     public int _width = 5;
