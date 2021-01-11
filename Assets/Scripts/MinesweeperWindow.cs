@@ -2,27 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-enum GamePrefab
-{
-    ZeroPrefab,
-    OnePrefab,
-    TwoPrefab,
-    ThreePrefab,
-    FourPrefab,
-    FivePrefab,
-    SixPrefab,
-    SevenPrefab,
-    EigthPrefab,
-    BombPrefab,
-    RectPrefab,
-    UnclickedPrefab
-}
-
 public class MinesweeperWindow : MonoBehaviour
 {
-    // TODO : find better way to store prefabs (maybe create dedicated class ! FACTORY !)
-    public GameObject[] _prefabs;
-
     public int _width = 5;
     public int _heigth = 5;
     public int _bombCount = 5;
@@ -63,7 +44,7 @@ public class MinesweeperWindow : MonoBehaviour
         {
             for (int j = 0; j < grid.GetLength(1); j++)
             {
-                GameObject unclickedPrefab = Instantiate(_prefabs[(int) GamePrefab.UnclickedPrefab], new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
+                GameObject unclickedPrefab = Instantiate(PrefabFactory.GetUncoveredCellPrefab(), new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
                 unclickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
                 _objectGrid[i, j] = unclickedPrefab;
             }
@@ -123,7 +104,10 @@ public class MinesweeperWindow : MonoBehaviour
     private void DiscoverCell(int x, int y, int bombs)
     {
         Destroy(_objectGrid[y, x]);
-        GameObject clickedPrefab = Instantiate(_prefabs[bombs], new Vector3(0, 0, 0), Quaternion.identity, transform);
+
+        GameObject prefab = (bombs == 9) ? PrefabFactory.GetBombPrefab() : PrefabFactory.GetDiscoveredCellPrefab(bombs);
+        GameObject clickedPrefab = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity, transform);
+        
         clickedPrefab.transform.localPosition = new Vector3(x * _scale, y * _scale, 0);
         clickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
         _objectGrid[y, x] = clickedPrefab;
@@ -144,7 +128,7 @@ public class MinesweeperWindow : MonoBehaviour
 
         if (_moveArea == null)
         {
-            _moveArea = Instantiate(_prefabs[(int) GamePrefab.RectPrefab], new Vector3(transform.position.x + _width * _scale / 2 - _scale / 2, transform.position.y + _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
+            _moveArea = Instantiate(PrefabFactory.GetRectPrefab(), new Vector3(transform.position.x + _width * _scale / 2 - _scale / 2, transform.position.y + _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
         }
 
         _moveArea.GetComponent<SpriteRenderer>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
