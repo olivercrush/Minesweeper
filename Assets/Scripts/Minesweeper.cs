@@ -6,7 +6,6 @@ public class Minesweeper
 {
     private MinesweeperGrid _grid;
 
-    // Start is called before the first frame update
     public Minesweeper(int width, int height, int bombCount)
     {
         _grid = new MinesweeperGrid(width, height, bombCount);
@@ -19,9 +18,13 @@ public class Minesweeper
 
     public List<(int, int, int)> DiscoverFirstCell(int x, int y)
     {
-        if (_grid.GetBombs()[y, x])
+        List<(int, int)> bombList = _grid.GetBombsInRange(x, y, 2);
+        if (bombList.Count > 0)
         {
-            _grid.ReplaceBomb(x, y);
+            foreach ((int, int) bomb in bombList)
+            {
+                _grid.ReplaceBomb(bomb.Item1, bomb.Item2);
+            }
         }
 
         return DiscoverCell(x, y, 0);
@@ -31,7 +34,7 @@ public class Minesweeper
     {
         List<(int, int, int)> discoveredCells = new List<(int, int, int)>();
 
-        if (_grid.IsValidCell(x, y))
+        if (_grid.IsValidCell(x, y) && !_grid.GetBombs()[y, x])
         {
             _grid.CoverCell(x, y);
 

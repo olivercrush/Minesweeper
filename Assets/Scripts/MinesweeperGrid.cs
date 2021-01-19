@@ -54,7 +54,7 @@ public class MinesweeperGrid
 
     public bool IsValidCell(int x, int y)
     {
-        return y >= 0 && y < _heigth && x >= 0 && x < _width && !_coverage[y, x] && !_bombs[y, x];
+        return y >= 0 && y < _heigth && x >= 0 && x < _width && !_coverage[y, x];
     }
 
     public int GetAdjacentBombsCount(int x, int y)
@@ -73,6 +73,24 @@ public class MinesweeperGrid
         }
 
         return count;
+    }
+
+    public List<(int, int)> GetBombsInRange(int x, int y, int range)
+    {
+        List<(int, int)> bombList = new List<(int, int)>();
+
+        for (int i = y - range; i <= y + range; i++)
+        {
+            for (int j = x - range; j <= x + range; j++)
+            {
+                if (IsValidCell(j, i) && _bombs[i, j])
+                {
+                    bombList.Add((j, i));
+                }
+            }
+        }
+
+        return bombList;
     }
 
     private bool[,] GenerateGrid(int width, int heigth, int bombCount)
