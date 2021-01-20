@@ -61,6 +61,8 @@ public class MinesweeperGrid
     {
         int count = 0;
 
+        if (_bombs[y, x]) return 9;
+
         for (int i = y - 1; i <= y + 1; i++)
         {
             for (int j = x - 1; j <= x + 1; j++)

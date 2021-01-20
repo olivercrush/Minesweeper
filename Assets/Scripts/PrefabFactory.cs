@@ -27,4 +27,10 @@ public static class PrefabFactory
         GameObject prefab = Resources.Load<GameObject>("Prefabs/Cell_BombHint");
         return prefab;
     }
+
+    public static GameObject GetLastClickedPrefab()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/Cell_LastClicked");
+        return prefab;
+    }
 }

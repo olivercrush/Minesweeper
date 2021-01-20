@@ -18,16 +18,29 @@ public class Minesweeper
 
     public List<(int, int, int)> DiscoverFirstCell(int x, int y)
     {
-        List<(int, int)> bombList = _grid.GetBombsInRange(x, y, 2);
-        if (bombList.Count > 0)
+        List<(int, int)> bombList;
+
+        // find better way to prevent replacing in range
+
+        do
         {
-            foreach ((int, int) bomb in bombList)
+            bombList = _grid.GetBombsInRange(x, y, 2);
+            if (bombList.Count > 0)
             {
-                _grid.ReplaceBomb(bomb.Item1, bomb.Item2);
+                Debug.Log("== REPLACING BOMBS in range at (" + x + ":" + y + ") ==");
+                foreach ((int, int) bomb in bombList)
+                {
+                    _grid.ReplaceBomb(bomb.Item1, bomb.Item2);
+                }
             }
-        }
+        } while (bombList.Count > 0);
 
         return DiscoverCell(x, y, 0);
+    }
+
+    public int GetAdjacentBombs(int x, int y)
+    {
+        return _grid.GetAdjacentBombsCount(x, y);
     }
 
     public List<(int, int, int)> DiscoverCell(int x, int y, int level)

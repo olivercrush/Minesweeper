@@ -17,7 +17,8 @@ public class MinesweeperWindow : MonoBehaviour
     private GameObject[,] _objectGrid;
     private GameObject _moveArea;
 
-    private bool firstMoveDone = false;
+    private bool _firstMoveDone = false;
+    private (int, int) _lastMove = (-1, -1);
 
     private bool _followCursor = false;
     private Vector3 _cursorOffset = Vector3.zero;
@@ -75,10 +76,10 @@ public class MinesweeperWindow : MonoBehaviour
             int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
             int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
 
-            List<(int, int, int)> discoveredCells = firstMoveDone ? _minesweeper.DiscoverCell(x, y, 0) : _minesweeper.DiscoverFirstCell(x, y);
-            if (!firstMoveDone)
+            List<(int, int, int)> discoveredCells = _firstMoveDone ? _minesweeper.DiscoverCell(x, y, 0) : _minesweeper.DiscoverFirstCell(x, y);
+            if (!_firstMoveDone)
             {
-                firstMoveDone = true;
+                _firstMoveDone = true;
             }
 
             //Debug.Log(discoveredCells.Count);
@@ -111,6 +112,17 @@ public class MinesweeperWindow : MonoBehaviour
         clickedPrefab.transform.localPosition = new Vector3(x * _scale, y * _scale, 0);
         clickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
         _objectGrid[y, x] = clickedPrefab;
+    }
+
+    private void ReplaceCell(int x, int y, GameObject newPrefab)
+    {
+        Destroy(_objectGrid[y, x]);
+
+        GameObject cellPrefab = Instantiate(newPrefab, new Vector3(0, 0, 0), Quaternion.identity, transform);
+
+        cellPrefab.transform.localPosition = new Vector3(x * _scale, y * _scale, 0);
+        cellPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
+        _objectGrid[y, x] = cellPrefab;
     }
 
     private void OnMouseUp()
