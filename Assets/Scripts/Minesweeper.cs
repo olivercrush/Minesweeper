@@ -16,6 +16,11 @@ public class Minesweeper
         return _grid.GetBombs();
     }
 
+    public int GetAdjacentBombs(int x, int y)
+    {
+        return _grid.GetAdjacentBombsCount(x, y);
+    }
+
     public List<(int, int, int)> DiscoverFirstCell(int x, int y)
     {
         List<(int, int)> bombList;
@@ -27,7 +32,6 @@ public class Minesweeper
             bombList = _grid.GetBombsInRange(x, y, 2);
             if (bombList.Count > 0)
             {
-                Debug.Log("== REPLACING BOMBS in range at (" + x + ":" + y + ") ==");
                 foreach ((int, int) bomb in bombList)
                 {
                     _grid.ReplaceBomb(bomb.Item1, bomb.Item2);
@@ -38,12 +42,7 @@ public class Minesweeper
         return DiscoverCell(x, y, 0);
     }
 
-    public int GetAdjacentBombs(int x, int y)
-    {
-        return _grid.GetAdjacentBombsCount(x, y);
-    }
-
-    public List<(int, int, int)> DiscoverCell(int x, int y, int level)
+    public List<(int, int, int)> DiscoverCell(int x, int y, int level = 0)
     {
         List<(int, int, int)> discoveredCells = new List<(int, int, int)>();
 

@@ -110,13 +110,14 @@ public class MinesweeperGrid
         for (int i = 0; i < _bombCount; i++)
         {
             int x, y;
+
             do
             {
                 x = Mathf.FloorToInt(Random.value * width);
                 y = Mathf.FloorToInt(Random.value * heigth);
             } while (grid[y, x]);
+
             grid[y, x] = true;
-            //Debug.Log("Bomb at (" + x + ";" + y + ")");
         }
 
         return grid;

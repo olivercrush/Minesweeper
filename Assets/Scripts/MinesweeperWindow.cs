@@ -76,21 +76,17 @@ public class MinesweeperWindow : MonoBehaviour
             int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
             int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
 
-            List<(int, int, int)> discoveredCells = _firstMoveDone ? _minesweeper.DiscoverCell(x, y, 0) : _minesweeper.DiscoverFirstCell(x, y);
+            List<(int, int, int)> discoveredCells = _firstMoveDone ? _minesweeper.DiscoverCell(x, y) : _minesweeper.DiscoverFirstCell(x, y);
             if (!_firstMoveDone)
             {
                 _firstMoveDone = true;
             }
 
-            //Debug.Log(discoveredCells.Count);
             for (int i = 0; i < discoveredCells.Count; i++)
             {
                 (int, int, int) cell = discoveredCells[i];
                 DiscoverCell(cell.Item1, cell.Item2, cell.Item3);
             }
-
-            // Debug.Log(_minesweeper.DiscoverCell(x, y));
-            // Debug.Log("clicked : " + x + "," + y);
         }
         else
         {
