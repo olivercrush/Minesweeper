@@ -34,15 +34,16 @@ public class Minesweeper
 
     public List<(int, int, int)> DiscoverCell(int x, int y, int level = 0)
     {
-        List<(int, int, int)> discoveredCells = new List<(int, int, int)>();
+        List<(int, int, int)> turnedCells = new List<(int, int, int)>();
 
         if (_grid.IsValidCell(x, y) && !_grid.IsBomb(x, y) && !_grid.IsTurned(x, y))
         {
-            _grid.CoverCell(x, y);
+            _grid.TurnCell(x, y);
 
             int adjacentBombCount = _grid.GetAdjacentBombCount(x, y);
-            discoveredCells.Add((x, y, adjacentBombCount));
+            turnedCells.Add((x, y, adjacentBombCount));
 
+            // s'il n'y a pas de bombes aux alentours, on tourne également les cellules adjacentes
             if (adjacentBombCount == 0)
             {
                 List<Cell> adjacentCells = _grid.GetAdjacentCells(x, y);
@@ -52,17 +53,17 @@ public class Minesweeper
                     if (!_grid.IsTurned(coords.Item1, coords.Item2))
                     {
                         List<(int, int, int)> tmp = DiscoverCell(coords.Item1, coords.Item2, 1);
-                        discoveredCells.AddRange(tmp);
+                        turnedCells.AddRange(tmp);
                     }
                 }
             }
         }
         else if (level == 0 && _grid.IsBomb(x, y))
         {
-            discoveredCells.Add((x, y, 9));
+            turnedCells.Add((x, y, 9));
         }
 
-        return discoveredCells;
+        return turnedCells;
     }
 
     

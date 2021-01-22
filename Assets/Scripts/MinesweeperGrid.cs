@@ -29,7 +29,7 @@ public class MinesweeperGrid
         return _grid[y, x].IsTurned();
     }
 
-    public void CoverCell(int x, int y)
+    public void TurnCell(int x, int y)
     {
         _grid[y, x].TurnCell();
     }
@@ -50,15 +50,28 @@ public class MinesweeperGrid
         _grid[newY, newX].SetBomb(true);
     }
 
+    /// <summary>
+    /// method <c>IsValidCell</c> checks if the coordinates are contained in the grid domain
+    /// </summary>
+    /// <param name="x">the x position of the point to check</param>
+    /// <param name="y">the y position of the point to check</param>
+    /// <returns>true if the point is in the grid domain, false otherwise</returns>
     public bool IsValidCell(int x, int y)
     {
-        return y >= 0 && y < _heigth && x >= 0 && x < _width /*&& !_grid[y, x].IsTurned()*/;
+        return y >= 0 && y < _heigth && x >= 0 && x < _width;
     }
 
+    /// <summary>
+    /// method <c>GetAdjacentBombCount</c> returns the number of bombs in adjacent cells
+    /// </summary>
+    /// <param name="x">the x position of the cell</param>
+    /// <param name="y">the y position of the cell</param>
+    /// <returns>an integer that represents the number of bombs in adjacent cells (max. 8)</returns>
     public int GetAdjacentBombCount(int x, int y)
     {
         int count = 0;
 
+        // TODO : make this verification in upper class
         if (_grid[y, x].IsBomb()) return 9;
 
         List<Cell> adjacentCells = GetAdjacentCells(x, y);
@@ -70,17 +83,24 @@ public class MinesweeperGrid
         return count;
     }
 
-    public List<(int, int)> GetBombCountInRange(int x, int y, int range)
+    /// <summary>
+    /// method <c>GetBombCountInRange</c> returns all bomb cells in range from (x, y), using taxi-distance
+    /// </summary>
+    /// <param name="x">the x position of the cell</param>
+    /// <param name="y">the y position of the cell</param>
+    /// <param name="range">the range in which we want to detect bombs</param>
+    /// <returns>the list containing all bomb cells in range of (x, y)</returns>
+    public List<Cell> GetBombCountInRange(int x, int y, int range)
     {
-        List<(int, int)> bombList = new List<(int, int)>();
+        List<Cell> bombList = new List<Cell>();
 
         for (int i = y - range; i <= y + range; i++)
         {
             for (int j = x - range; j <= x + range; j++)
             {
-                if (IsValidCell(j, i) && _grid[i, j].IsBomb())
+                if (IsValidCell(j, i) && (Mathf.Abs(i - y) + Mathf.Abs(j - x) <= range) && _grid[i, j].IsBomb())
                 {
-                    bombList.Add((j, i));
+                    bombList.Add(_grid[j, i]);
                 }
             }
         }
