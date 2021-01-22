@@ -19,16 +19,6 @@ public class MinesweeperGrid
         _grid = GenerateGrid(width, height, bombCount);
     }
 
-    public bool IsBomb(int x, int y)
-    {
-        return _grid[y, x].IsBomb();
-    }
-
-    public bool IsTurned(int x, int y)
-    {
-        return _grid[y, x].IsTurned();
-    }
-
     public void TurnCell(int x, int y)
     {
         _grid[y, x].TurnCell();
@@ -36,18 +26,34 @@ public class MinesweeperGrid
 
     public void ReplaceBomb(int x, int y)
     {
-        _grid[y, x].SetBomb(false);
-
-        int newX;
-        int newY;
-
-        do
+        if (_grid[y, x].IsBomb())
         {
-            newX = Mathf.FloorToInt(Random.value * _width);
-            newY = Mathf.FloorToInt(Random.value * _heigth);
-        } while (_grid[newY, newX].IsBomb());
+            _grid[y, x].SetBomb(false);
 
-        _grid[newY, newX].SetBomb(true);
+            int newX;
+            int newY;
+
+            do
+            {
+                newX = Mathf.FloorToInt(Random.value * _width);
+                newY = Mathf.FloorToInt(Random.value * _heigth);
+            } while (_grid[newY, newX].IsBomb());
+
+            _grid[newY, newX].SetBomb(true);
+        }
+        else
+        {
+            Debug.LogWarning("[MinesweeperGrid].ReplaceBomb(int x, int y) : Tried to replace a non-bomb cell");
+        }
+    }
+
+    public void ReplaceBomb(Cell bomb)
+    {
+        if (bomb.IsBomb())
+        {
+            (int, int) coords = bomb.GetCoordinates();
+            ReplaceBomb(coords.Item1, coords.Item2);
+        }
     }
 
     /// <summary>
@@ -84,13 +90,13 @@ public class MinesweeperGrid
     }
 
     /// <summary>
-    /// method <c>GetBombCountInRange</c> returns all bomb cells in range from (x, y), using taxi-distance
+    /// method <c>GetBombsInRange</c> returns all bomb cells in range from (x, y), using taxi-distance
     /// </summary>
     /// <param name="x">the x position of the cell</param>
     /// <param name="y">the y position of the cell</param>
     /// <param name="range">the range in which we want to detect bombs</param>
     /// <returns>the list containing all bomb cells in range of (x, y)</returns>
-    public List<Cell> GetBombCountInRange(int x, int y, int range)
+    public List<Cell> GetBombsInRange(int x, int y, int range)
     {
         List<Cell> bombList = new List<Cell>();
 
@@ -100,7 +106,7 @@ public class MinesweeperGrid
             {
                 if (IsValidCell(j, i) && (Mathf.Abs(i - y) + Mathf.Abs(j - x) <= range) && _grid[i, j].IsBomb())
                 {
-                    bombList.Add(_grid[j, i]);
+                    bombList.Add(_grid[i, j]);
                 }
             }
         }
@@ -123,7 +129,6 @@ public class MinesweeperGrid
             }
         }
 
-        Debug.Log(adjacentCells.Count);
         return adjacentCells;
     }
 
@@ -153,5 +158,17 @@ public class MinesweeperGrid
         }
 
         return grid;
+    }
+
+    // GETTERS
+
+    public bool IsBomb(int x, int y)
+    {
+        return _grid[y, x].IsBomb();
+    }
+
+    public bool IsTurned(int x, int y)
+    {
+        return _grid[y, x].IsTurned();
     }
 }
