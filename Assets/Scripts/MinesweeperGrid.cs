@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class MinesweeperGrid
 {
-    private bool[,] _bombs;
-    private bool[,] _coverage;
+    private Cell[,] _grid;
 
     private int _width;
     private int _heigth;
@@ -17,28 +16,27 @@ public class MinesweeperGrid
         _heigth = height;
         _bombCount = bombCount;
 
-        _bombs = GenerateGrid(width, height, bombCount);
-        _coverage = GenerateCoverage(width, height);
+        _grid = GenerateGrid(width, height, bombCount);
     }
 
-    public bool[,] GetBombs()
+    public bool IsBomb(int x, int y)
     {
-        return _bombs;
+        return _grid[y, x].IsBomb();
     }
 
-    public bool[,] GetCoverage()
+    public bool IsTurned(int x, int y)
     {
-        return _coverage;
+        return _grid[y, x].IsTurned();
     }
 
     public void CoverCell(int x, int y)
     {
-        _coverage[y, x] = true;
+        _grid[y, x].TurnCell();
     }
 
     public void ReplaceBomb(int x, int y)
     {
-        _bombs[y, x] = false;
+        _grid[y, x].SetBomb(false);
 
         int newX;
         int newY;
@@ -47,37 +45,32 @@ public class MinesweeperGrid
         {
             newX = Mathf.FloorToInt(Random.value * _width);
             newY = Mathf.FloorToInt(Random.value * _heigth);
-        } while (_bombs[newY, newX]);
+        } while (_grid[newY, newX].IsBomb());
 
-        _bombs[newY, newX] = true;
+        _grid[newY, newX].SetBomb(true);
     }
 
     public bool IsValidCell(int x, int y)
     {
-        return y >= 0 && y < _heigth && x >= 0 && x < _width && !_coverage[y, x];
+        return y >= 0 && y < _heigth && x >= 0 && x < _width /*&& !_grid[y, x].IsTurned()*/;
     }
 
-    public int GetAdjacentBombsCount(int x, int y)
+    public int GetAdjacentBombCount(int x, int y)
     {
         int count = 0;
 
-        if (_bombs[y, x]) return 9;
+        if (_grid[y, x].IsBomb()) return 9;
 
-        for (int i = y - 1; i <= y + 1; i++)
+        List<Cell> adjacentCells = GetAdjacentCells(x, y);
+        foreach (Cell cell in adjacentCells)
         {
-            for (int j = x - 1; j <= x + 1; j++)
-            {
-                if (i >= 0 && i < _heigth && j >= 0 && j < _width && !(i == y && j == x) && _bombs[i, j])
-                {
-                    count++;
-                }
-            }
+            if (cell.IsBomb()) count++;
         }
 
         return count;
     }
 
-    public List<(int, int)> GetBombsInRange(int x, int y, int range)
+    public List<(int, int)> GetBombCountInRange(int x, int y, int range)
     {
         List<(int, int)> bombList = new List<(int, int)>();
 
@@ -85,7 +78,7 @@ public class MinesweeperGrid
         {
             for (int j = x - range; j <= x + range; j++)
             {
-                if (IsValidCell(j, i) && _bombs[i, j])
+                if (IsValidCell(j, i) && _grid[i, j].IsBomb())
                 {
                     bombList.Add((j, i));
                 }
@@ -95,15 +88,34 @@ public class MinesweeperGrid
         return bombList;
     }
 
-    private bool[,] GenerateGrid(int width, int heigth, int bombCount)
+    public List<Cell> GetAdjacentCells(int x, int y)
     {
-        bool[,] grid = new bool[heigth, width];
+        List<Cell> adjacentCells = new List<Cell>();
+
+        for (int i = y - 1; i <= y + 1; i++)
+        {
+            for (int j = x - 1; j <= x + 1; j++)
+            {
+                if (IsValidCell(j, i) && !(j == x && i == y))
+                {
+                    adjacentCells.Add(_grid[i, j]);
+                }
+            }
+        }
+
+        Debug.Log(adjacentCells.Count);
+        return adjacentCells;
+    }
+
+    private Cell[,] GenerateGrid(int width, int heigth, int bombCount)
+    {
+        Cell[,] grid = new Cell[heigth, width];
 
         for (int i = 0; i < grid.GetLength(0); i++)
         {
             for (int j = 0; j < grid.GetLength(1); j++)
             {
-                grid[i, j] = false;
+                grid[i, j] = new Cell(j, i, false);
             }
         }
 
@@ -115,26 +127,11 @@ public class MinesweeperGrid
             {
                 x = Mathf.FloorToInt(Random.value * width);
                 y = Mathf.FloorToInt(Random.value * heigth);
-            } while (grid[y, x]);
+            } while (grid[y, x].IsBomb());
 
-            grid[y, x] = true;
+            grid[y, x].SetBomb(true);
         }
 
         return grid;
-    }
-
-    private bool[,] GenerateCoverage(int width, int height)
-    {
-        bool[,] coverage = new bool[height, width];
-
-        for (int i = 0; i < coverage.GetLength(0); i++)
-        {
-            for (int j = 0; j < coverage.GetLength(1); j++)
-            {
-                coverage[i, j] = false;
-            }
-        }
-
-        return coverage;
     }
 }

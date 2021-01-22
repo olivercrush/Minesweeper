@@ -28,7 +28,7 @@ public class MinesweeperWindow : MonoBehaviour
     void Start()
     {
         _minesweeper = new Minesweeper(_width, _heigth, _bombCount);
-        InstantiateObjects(_minesweeper.GetBombs());
+        InstantiateObjects();
         CenterCamera();
 
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
@@ -36,14 +36,14 @@ public class MinesweeperWindow : MonoBehaviour
         collider.offset = new Vector2(_width * _scale / 2 - _scale / 2, _heigth * _scale / 2 - _scale / 2);
     }
 
-    private void InstantiateObjects(bool[,] grid)
+    private void InstantiateObjects()
     {
         _objectGrid = new GameObject[_heigth, _width];
 
         // Cells
-        for (int i = 0; i < grid.GetLength(0); i++)
+        for (int i = 0; i < _heigth; i++)
         {
-            for (int j = 0; j < grid.GetLength(1); j++)
+            for (int j = 0; j < _width; j++)
             {
                 GameObject unclickedPrefab = Instantiate(PrefabFactory.GetUncoveredCellPrefab(), new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
                 unclickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);

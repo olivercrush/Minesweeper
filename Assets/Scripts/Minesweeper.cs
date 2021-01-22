@@ -11,16 +11,6 @@ public class Minesweeper
         _grid = new MinesweeperGrid(width, height, bombCount);
     }
 
-    public bool[,] GetBombs()
-    {
-        return _grid.GetBombs();
-    }
-
-    public int GetAdjacentBombs(int x, int y)
-    {
-        return _grid.GetAdjacentBombsCount(x, y);
-    }
-
     public List<(int, int, int)> DiscoverFirstCell(int x, int y)
     {
         List<(int, int)> bombList;
@@ -29,7 +19,7 @@ public class Minesweeper
 
         do
         {
-            bombList = _grid.GetBombsInRange(x, y, 2);
+            bombList = _grid.GetBombCountInRange(x, y, 2);
             if (bombList.Count > 0)
             {
                 foreach ((int, int) bomb in bombList)
@@ -46,41 +36,28 @@ public class Minesweeper
     {
         List<(int, int, int)> discoveredCells = new List<(int, int, int)>();
 
-        if (_grid.IsValidCell(x, y) && !_grid.GetBombs()[y, x])
+        if (_grid.IsValidCell(x, y) && !_grid.IsBomb(x, y) && !_grid.IsTurned(x, y))
         {
             _grid.CoverCell(x, y);
 
-            int adjacentBombCount = _grid.GetAdjacentBombsCount(x, y);
+            int adjacentBombCount = _grid.GetAdjacentBombCount(x, y);
             discoveredCells.Add((x, y, adjacentBombCount));
 
             if (adjacentBombCount == 0)
             {
-                List<(int, int, int)> west = DiscoverCell(x - 1, y, 1);
-                discoveredCells.AddRange(west);
-
-                List<(int, int, int)> east = DiscoverCell(x + 1, y, 1);
-                discoveredCells.AddRange(east);
-
-                List<(int, int, int)> north = DiscoverCell(x, y - 1, 1);
-                discoveredCells.AddRange(north);
-
-                List<(int, int, int)> south = DiscoverCell(x, y + 1, 1);
-                discoveredCells.AddRange(south);
-
-                List<(int, int, int)> northwest = DiscoverCell(x - 1, y + 1, 1);
-                discoveredCells.AddRange(northwest);
-
-                List<(int, int, int)> northeast = DiscoverCell(x + 1, y + 1, 1);
-                discoveredCells.AddRange(northeast);
-
-                List<(int, int, int)> southwest = DiscoverCell(x - 1, y - 1, 1);
-                discoveredCells.AddRange(southwest);
-
-                List<(int, int, int)> southeast = DiscoverCell(x + 1, y - 1, 1);
-                discoveredCells.AddRange(southeast);
+                List<Cell> adjacentCells = _grid.GetAdjacentCells(x, y);
+                foreach (Cell cell in adjacentCells)
+                {
+                    (int, int) coords = cell.GetCoordinates();
+                    if (!_grid.IsTurned(coords.Item1, coords.Item2))
+                    {
+                        List<(int, int, int)> tmp = DiscoverCell(coords.Item1, coords.Item2, 1);
+                        discoveredCells.AddRange(tmp);
+                    }
+                }
             }
         }
-        else if (level == 0 && _grid.GetBombs()[y, x])
+        else if (level == 0 && _grid.IsBomb(x, y))
         {
             discoveredCells.Add((x, y, 9));
         }
