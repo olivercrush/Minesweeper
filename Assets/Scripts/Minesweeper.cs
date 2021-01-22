@@ -15,7 +15,7 @@ public class Minesweeper
     {
         List<Cell> bombList;
 
-        // find better way to prevent replacing in range
+        // TODO : find better way to prevent replacing in range
 
         do
         {
@@ -43,7 +43,7 @@ public class Minesweeper
             int adjacentBombCount = _grid.GetAdjacentBombCount(x, y);
             turnedCells.Add((x, y, adjacentBombCount));
 
-            // s'il n'y a pas de bombes aux alentours, on tourne également les cellules adjacentes
+            // if there is no adjacent bombs, we turn all adjacent cells
             if (adjacentBombCount == 0)
             {
                 List<Cell> adjacentCells = _grid.GetAdjacentCells(x, y);

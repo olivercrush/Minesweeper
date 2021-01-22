@@ -40,7 +40,6 @@ public class MinesweeperWindow : MonoBehaviour
     {
         _objectGrid = new GameObject[_heigth, _width];
 
-        // Cells
         for (int i = 0; i < _heigth; i++)
         {
             for (int j = 0; j < _width; j++)
@@ -70,6 +69,8 @@ public class MinesweeperWindow : MonoBehaviour
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = 0.3f;
         mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+
+        // TODO : make an alternate process to figure out the user action
 
         if (IsMouseOnMinesweeper(mousePos))
         {
