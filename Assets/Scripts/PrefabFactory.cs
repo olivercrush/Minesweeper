@@ -33,4 +33,10 @@ public static class PrefabFactory
         GameObject prefab = Resources.Load<GameObject>("Prefabs/Cell_LastClicked");
         return prefab;
     }
+
+    public static GameObject GetMarkedPrefab()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/Cell_Marked");
+        return prefab;
+    }
 }
