@@ -66,4 +66,9 @@ public class Cell
     {
         _isMarked = !_isMarked;
     }
+
+    public void NotifyObservers()
+    {
+        
+    }
 }

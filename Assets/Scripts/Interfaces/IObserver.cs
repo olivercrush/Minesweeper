@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IObserver<T>
+public interface IObserver
 {
-    void UpdateFromObservable(T observable);
+    void UpdateFromObservable();
 }

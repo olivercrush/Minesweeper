@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MinesweeperWindow : MonoBehaviour
+public class MinesweeperWindow : MonoBehaviour, IObserver
 {
     public int _width = 5;
     public int _heigth = 5;
@@ -28,6 +28,8 @@ public class MinesweeperWindow : MonoBehaviour
     void Start()
     {
         _minesweeper = new Minesweeper(_width, _heigth, _bombCount);
+        _minesweeper.RegisterObserver(this);
+
         InstantiateObjects();
         CenterCamera();
 
@@ -77,17 +79,19 @@ public class MinesweeperWindow : MonoBehaviour
             int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
             int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
 
-            List<(int, int, int)> discoveredCells = _firstMoveDone ? _minesweeper.DiscoverCell(x, y) : _minesweeper.DiscoverFirstCell(x, y);
-            if (!_firstMoveDone)
-            {
+            if (_firstMoveDone) {
+                _minesweeper.DiscoverCell(x, y);
+            }
+            else {
+                _minesweeper.DiscoverFirstCell(x, y);
                 _firstMoveDone = true;
             }
 
-            for (int i = 0; i < discoveredCells.Count; i++)
+            /*for (int i = 0; i < discoveredCells.Count; i++)
             {
                 (int, int, int) cell = discoveredCells[i];
                 DiscoverCell(cell.Item1, cell.Item2, cell.Item3);
-            }
+            }*/
         }
         else
         {
@@ -172,6 +176,14 @@ public class MinesweeperWindow : MonoBehaviour
             Destroy(_moveArea);
             _moveArea = null;
             GetComponent<BoxCollider2D>().size = new Vector2(_width * _scale, _heigth * _scale);
+        }
+    }
+
+    public void UpdateFromObservable()
+    {
+        foreach ((int, int, int) c in _minesweeper.GetUpdatedCells())
+        {
+            DiscoverCell(c.Item1, c.Item2, c.Item3);
         }
     }
 }

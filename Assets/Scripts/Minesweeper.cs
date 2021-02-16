@@ -2,16 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Minesweeper
+public class Minesweeper : IObservable
 {
     private MinesweeperGrid _grid;
+    private List<IObserver> _observers;
+    private List<(int, int, int)> _updatedCells;
 
     public Minesweeper(int width, int height, int bombCount)
     {
         _grid = new MinesweeperGrid(width, height, bombCount);
+        _observers = new List<IObserver>();
+        _updatedCells = new List<(int, int, int)>();
     }
 
-    public List<(int, int, int)> DiscoverFirstCell(int x, int y)
+    public List<(int, int, int)> GetUpdatedCells()
+    {
+        return _updatedCells;
+    }
+
+    public void DiscoverFirstCell(int x, int y)
     {
         List<Cell> bombList;
 
@@ -29,19 +38,17 @@ public class Minesweeper
             }
         } while (bombList.Count > 0);
 
-        return DiscoverCell(x, y, 0);
+        DiscoverCell(x, y, 0);
     }
 
-    public List<(int, int, int)> DiscoverCell(int x, int y, int level = 0)
+    public void DiscoverCell(int x, int y, int level = 0)
     {
-        List<(int, int, int)> turnedCells = new List<(int, int, int)>();
-
         if (_grid.IsValidCell(x, y) && !_grid.IsBomb(x, y) && !_grid.IsTurned(x, y))
         {
             _grid.TurnCell(x, y);
 
             int adjacentBombCount = _grid.GetAdjacentBombCount(x, y);
-            turnedCells.Add((x, y, adjacentBombCount));
+            _updatedCells.Add((x, y, adjacentBombCount));
 
             // if there is no adjacent bombs, we turn all adjacent cells
             if (adjacentBombCount == 0)
@@ -52,19 +59,33 @@ public class Minesweeper
                     (int, int) coords = cell.GetCoordinates();
                     if (!_grid.IsTurned(coords.Item1, coords.Item2))
                     {
-                        List<(int, int, int)> tmp = DiscoverCell(coords.Item1, coords.Item2, 1);
-                        turnedCells.AddRange(tmp);
+                        DiscoverCell(coords.Item1, coords.Item2, 1);
                     }
                 }
             }
         }
         else if (level == 0 && _grid.IsBomb(x, y))
         {
-            turnedCells.Add((x, y, 9));
+            _updatedCells.Add((x, y, 9));
         }
 
-        return turnedCells;
+        if (level == 0) NotifyObservers();
     }
 
-    
+    public void RegisterObserver(IObserver observer)
+    {
+        _observers.Add(observer);
+    }
+
+    public void NotifyObservers()
+    {
+        //Debug.Log(_updatedCells.Count + " updates");
+
+        foreach (IObserver o in _observers)
+        {
+            o.UpdateFromObservable();
+        }
+
+        _updatedCells.Clear();
+    }
 }
