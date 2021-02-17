@@ -2,10 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO :
+// [1] Create LogicUpdate class / type enum to cover all types of changes
+// [2] Find better way to prevent replacing in range
+
 public class Minesweeper : IObservable
 {
     private MinesweeperGrid _grid;
     private List<IObserver> _observers;
+
+    // [1]
     private List<(int, int, int)> _updatedCells;
 
     public Minesweeper(int width, int height, int bombCount)
@@ -24,8 +30,7 @@ public class Minesweeper : IObservable
     {
         List<Cell> bombList;
 
-        // TODO : find better way to prevent replacing in range
-
+        // [2]
         do
         {
             bombList = _grid.GetBombsInRange(x, y, 2);
@@ -79,8 +84,6 @@ public class Minesweeper : IObservable
 
     public void NotifyObservers()
     {
-        //Debug.Log(_updatedCells.Count + " updates");
-
         foreach (IObserver o in _observers)
         {
             o.UpdateFromObservable();

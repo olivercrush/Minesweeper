@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: 
+// [1] Make an alternate process to figure out the user action
+
 public class MinesweeperWindow : MonoBehaviour, IObserver
 {
     public int _width = 5;
@@ -72,8 +75,7 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         mousePos.z = 0.3f;
         mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
-        // TODO : make an alternate process to figure out the user action
-
+        // [1]
         if (IsMouseOnMinesweeper(mousePos))
         {
             int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
@@ -86,12 +88,6 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
                 _minesweeper.DiscoverFirstCell(x, y);
                 _firstMoveDone = true;
             }
-
-            /*for (int i = 0; i < discoveredCells.Count; i++)
-            {
-                (int, int, int) cell = discoveredCells[i];
-                DiscoverCell(cell.Item1, cell.Item2, cell.Item3);
-            }*/
         }
         else
         {
@@ -150,7 +146,6 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
 
     private void OnMouseExit()
     {
-        // Debug.Log("exited, _followCursor : " + _followCursor);
         CleanMoveArea();
     }
 
