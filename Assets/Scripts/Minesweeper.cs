@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // TODO :
-// [1] Create LogicUpdate class / type enum to cover all types of changes
 // [2] Find better way to prevent replacing in range
 
 public class Minesweeper : IObservable
@@ -11,17 +10,40 @@ public class Minesweeper : IObservable
     private MinesweeperGrid _grid;
     private List<IObserver> _observers;
 
-    // [1]
-    private List<(int, int, int)> _updatedCells;
+    private List<CellUpdate> _updatedCells;
+
+    public struct CellUpdate
+    {
+        public CellUpdateType type;
+        public int x;
+        public int y;
+        public int moore_bombs_count;
+
+        public CellUpdate(CellUpdateType t, int x, int y, int m)
+        {
+            this.type = t;
+            this.x = x;
+            this.y = y;
+            this.moore_bombs_count = m;
+        }
+    }
+
+    public enum CellUpdateType
+    {
+        DISCOVERED,
+        MARKED,
+        UNMARKED,
+        EXPLOSION
+    }
 
     public Minesweeper(int width, int height, int bombCount)
     {
         _grid = new MinesweeperGrid(width, height, bombCount);
         _observers = new List<IObserver>();
-        _updatedCells = new List<(int, int, int)>();
+        _updatedCells = new List<CellUpdate>();
     }
 
-    public List<(int, int, int)> GetUpdatedCells()
+    public List<CellUpdate> GetUpdatedCells()
     {
         return _updatedCells;
     }
@@ -53,7 +75,7 @@ public class Minesweeper : IObservable
             _grid.TurnCell(x, y);
 
             int adjacentBombCount = _grid.GetAdjacentBombCount(x, y);
-            _updatedCells.Add((x, y, adjacentBombCount));
+            _updatedCells.Add(new CellUpdate(CellUpdateType.DISCOVERED, x, y, adjacentBombCount));
 
             // if there is no adjacent bombs, we turn all adjacent cells
             if (adjacentBombCount == 0)
@@ -71,11 +93,13 @@ public class Minesweeper : IObservable
         }
         else if (level == 0 && _grid.IsBomb(x, y))
         {
-            _updatedCells.Add((x, y, 9));
+            _updatedCells.Add(new CellUpdate(CellUpdateType.EXPLOSION, x, y, -1));
         }
 
         if (level == 0) NotifyObservers();
     }
+
+    // IObservable
 
     public void RegisterObserver(IObserver observer)
     {

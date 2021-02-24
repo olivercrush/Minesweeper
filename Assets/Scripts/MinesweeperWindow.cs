@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // TODO: 
-// [1] Make an alternate process to figure out the user action
+// [1] Make an alternate process to figure out the user action (Update vs OnMouseDown)
+// [2] Standardise and clean the sh*t out of this (one method based on ReplaceCell)
+// [3] Add mark/unmark and standardise all the available actions
 
 public class MinesweeperWindow : MonoBehaviour, IObserver
 {
@@ -99,6 +101,7 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         }
     }
 
+    // [2]
     private void DiscoverCell(int x, int y, int bombs)
     {
         Destroy(_objectGrid[y, x]);
@@ -174,11 +177,29 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         }
     }
 
+    // IObserver
+
+    // [3]
     public void UpdateFromObservable()
     {
-        foreach ((int, int, int) c in _minesweeper.GetUpdatedCells())
+        foreach (Minesweeper.CellUpdate c in _minesweeper.GetUpdatedCells())
         {
-            DiscoverCell(c.Item1, c.Item2, c.Item3);
+            switch(c.type)
+            {
+                case Minesweeper.CellUpdateType.DISCOVERED:
+                    DiscoverCell(c.x, c.y, c.moore_bombs_count);
+                    break;
+
+                case Minesweeper.CellUpdateType.EXPLOSION:
+                    DiscoverCell(c.x, c.y, 9);
+                    break;
+
+                case Minesweeper.CellUpdateType.MARKED:
+                    break;
+
+                case Minesweeper.CellUpdateType.UNMARKED:
+                    break;
+            }
         }
     }
 }
