@@ -60,6 +60,12 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
 
     private void Update()
     {
+        // [1]
+        ClickAction();
+    }
+
+    private void FixedUpdate()
+    {
         if (_followCursor && _cursorOffset != Vector3.zero)
         {
             Vector3 mousePos = Input.mousePosition;
@@ -71,49 +77,52 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         }
     }
 
-    private void OnMouseDown()
+    // [1]
+    private void ClickAction()
     {
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = 0.3f;
         mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
-        // [1]
-        if (IsMouseOnMinesweeper(mousePos))
+        if (Input.GetMouseButtonDown(0))
         {
-            int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
-            int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
+            if (IsMouseOnMinesweeper(mousePos))
+            {
+                int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
+                int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
 
-            if (_firstMoveDone) {
-                _minesweeper.DiscoverCell(x, y);
+                if (_firstMoveDone)
+                {
+                    _minesweeper.DiscoverCell(x, y);
+                }
+                else
+                {
+                    _minesweeper.DiscoverFirstCell(x, y);
+                    _firstMoveDone = true;
+                }
             }
-            else {
-                _minesweeper.DiscoverFirstCell(x, y);
-                _firstMoveDone = true;
+            else
+            {
+                if (!_followCursor)
+                {
+                    _cursorOffset = mousePos - transform.position;
+                    _followCursor = true;
+                }
             }
         }
-        else
+
+        if (Input.GetMouseButtonDown(1))
         {
-            if (!_followCursor)
+            if (IsMouseOnMinesweeper(mousePos))
             {
-                _cursorOffset = mousePos - transform.position;
-                _followCursor = true;
+                int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
+                int y = Mathf.CeilToInt(mousePos.y - transform.position.y - _scale / 2);
+                _minesweeper.SwitchMarkCell(x, y);
             }
         }
     }
 
     // [2]
-    private void DiscoverCell(int x, int y, int bombs)
-    {
-        Destroy(_objectGrid[y, x]);
-
-        GameObject prefab = (bombs == 9) ? PrefabFactory.GetBombPrefab() : PrefabFactory.GetDiscoveredCellPrefab(bombs);
-        GameObject clickedPrefab = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity, transform);
-        
-        clickedPrefab.transform.localPosition = new Vector3(x * _scale, y * _scale, 0);
-        clickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
-        _objectGrid[y, x] = clickedPrefab;
-    }
-
     private void ReplaceCell(int x, int y, GameObject newPrefab)
     {
         Destroy(_objectGrid[y, x]);
@@ -187,17 +196,19 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
             switch(c.type)
             {
                 case Minesweeper.CellUpdateType.DISCOVERED:
-                    DiscoverCell(c.x, c.y, c.moore_bombs_count);
+                    ReplaceCell(c.x, c.y, PrefabFactory.GetDiscoveredCellPrefab(c.moore_bombs_count));
                     break;
 
                 case Minesweeper.CellUpdateType.EXPLOSION:
-                    DiscoverCell(c.x, c.y, 9);
+                    ReplaceCell(c.x, c.y, PrefabFactory.GetBombPrefab());
                     break;
 
                 case Minesweeper.CellUpdateType.MARKED:
+                    ReplaceCell(c.x, c.y, PrefabFactory.GetMarkedPrefab());
                     break;
 
                 case Minesweeper.CellUpdateType.UNMARKED:
+                    ReplaceCell(c.x, c.y, PrefabFactory.GetUncoveredCellPrefab());
                     break;
             }
         }

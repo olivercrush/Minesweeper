@@ -19,11 +19,6 @@ public class MinesweeperGrid
         _grid = GenerateGrid(width, height, bombCount);
     }
 
-    public void TurnCell(int x, int y)
-    {
-        _grid[y, x].TurnCell();
-    }
-
     public void ReplaceBomb(int x, int y)
     {
         if (_grid[y, x].IsBomb())
@@ -160,6 +155,18 @@ public class MinesweeperGrid
         return grid;
     }
 
+    // SETTERS
+
+    public void TurnCell(int x, int y)
+    {
+        _grid[y, x].TurnCell();
+    }
+
+    public void SwitchMarkCell(int x, int y)
+    {
+        _grid[y, x].SwitchMarked();
+    }
+
     // GETTERS
 
     public bool IsBomb(int x, int y)
@@ -170,5 +177,10 @@ public class MinesweeperGrid
     public bool IsTurned(int x, int y)
     {
         return _grid[y, x].IsTurned();
+    }
+
+    public bool IsMarked(int x, int y)
+    {
+        return _grid[y, x].IsMarked();
     }
 }

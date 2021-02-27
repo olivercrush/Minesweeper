@@ -48,6 +48,17 @@ public class Minesweeper : IObservable
         return _updatedCells;
     }
 
+    public void SwitchMarkCell(int x, int y)
+    {
+        if (!_grid.IsTurned(x, y))
+        {
+            _grid.SwitchMarkCell(x, y);
+            CellUpdateType type = (_grid.IsMarked(x, y)) ? CellUpdateType.MARKED : CellUpdateType.UNMARKED;
+            _updatedCells.Add(new CellUpdate(type, x, y, -1));
+            NotifyObservers();
+        }
+    }
+
     public void DiscoverFirstCell(int x, int y)
     {
         List<Cell> bombList;
