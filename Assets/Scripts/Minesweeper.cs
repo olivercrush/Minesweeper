@@ -81,7 +81,7 @@ public class Minesweeper : IObservable
 
     public void DiscoverCell(int x, int y, int level = 0)
     {
-        if (_grid.IsValidCell(x, y) && !_grid.IsBomb(x, y) && !_grid.IsTurned(x, y))
+        if (_grid.IsValidCell(x, y) && !_grid.IsBomb(x, y) && !_grid.IsTurned(x, y) && !_grid.IsMarked(x, y))
         {
             _grid.TurnCell(x, y);
 
@@ -102,8 +102,9 @@ public class Minesweeper : IObservable
                 }
             }
         }
-        else if (level == 0 && _grid.IsBomb(x, y))
+        else if (level == 0 && _grid.IsBomb(x, y) && !_grid.IsMarked(x, y))
         {
+            _grid.TurnCell(x, y);
             _updatedCells.Add(new CellUpdate(CellUpdateType.EXPLOSION, x, y, -1));
         }
 
