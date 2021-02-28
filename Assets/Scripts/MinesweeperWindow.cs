@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO: 
-// [1] Make an alternate process to figure out the user action (Update vs OnMouseDown)
-// [2] Standardise and clean the sh*t out of this (one method based on ReplaceCell)
-// [3] Add mark/unmark and standardise all the available actions
-
 public class MinesweeperWindow : MonoBehaviour, IObserver
 {
     public int _width = 5;
@@ -43,25 +38,10 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         collider.offset = new Vector2(_width * _scale / 2 - _scale / 2, _heigth * _scale / 2 - _scale / 2);
     }
 
-    private void InstantiateObjects()
-    {
-        _objectGrid = new GameObject[_heigth, _width];
-
-        for (int i = 0; i < _heigth; i++)
-        {
-            for (int j = 0; j < _width; j++)
-            {
-                GameObject unclickedPrefab = Instantiate(PrefabFactory.GetUncoveredCellPrefab(), new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
-                unclickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
-                _objectGrid[i, j] = unclickedPrefab;
-            }
-        }
-    }
-
     private void Update()
     {
-        // [1]
-        ClickAction();
+        DiscoverAction();
+        MarkAction();
     }
 
     private void FixedUpdate()
@@ -77,15 +57,14 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         }
     }
 
-    // [1]
-    private void ClickAction()
+    private void DiscoverAction()
     {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 0.3f;
-        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-
         if (Input.GetMouseButtonDown(0))
         {
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.z = 0.3f;
+            mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+
             if (IsMouseOnMinesweeper(mousePos))
             {
                 int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
@@ -110,9 +89,16 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
                 }
             }
         }
+    }
 
+    private void MarkAction()
+    {
         if (Input.GetMouseButtonDown(1))
         {
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.z = 0.3f;
+            mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+
             if (IsMouseOnMinesweeper(mousePos))
             {
                 int x = Mathf.CeilToInt(mousePos.x - transform.position.x - _scale / 2);
@@ -120,18 +106,6 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
                 _minesweeper.SwitchMarkCell(x, y);
             }
         }
-    }
-
-    // [2]
-    private void ReplaceCell(int x, int y, GameObject newPrefab)
-    {
-        Destroy(_objectGrid[y, x]);
-
-        GameObject cellPrefab = Instantiate(newPrefab, new Vector3(0, 0, 0), Quaternion.identity, transform);
-
-        cellPrefab.transform.localPosition = new Vector3(x * _scale, y * _scale, 0);
-        cellPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
-        _objectGrid[y, x] = cellPrefab;
     }
 
     private void OnMouseUp()
@@ -188,7 +162,6 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
 
     // IObserver
 
-    // [3]
     public void UpdateFromObservable()
     {
         foreach (Minesweeper.CellUpdate c in _minesweeper.GetUpdatedCells())
@@ -210,6 +183,32 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
                 case Minesweeper.CellUpdateType.UNMARKED:
                     ReplaceCell(c.x, c.y, PrefabFactory.GetUncoveredCellPrefab());
                     break;
+            }
+        }
+    }
+
+    private void ReplaceCell(int x, int y, GameObject newPrefab)
+    {
+        Destroy(_objectGrid[y, x]);
+
+        GameObject cellPrefab = Instantiate(newPrefab, new Vector3(0, 0, 0), Quaternion.identity, transform);
+
+        cellPrefab.transform.localPosition = new Vector3(x * _scale, y * _scale, 0);
+        cellPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
+        _objectGrid[y, x] = cellPrefab;
+    }
+
+    private void InstantiateObjects()
+    {
+        _objectGrid = new GameObject[_heigth, _width];
+
+        for (int i = 0; i < _heigth; i++)
+        {
+            for (int j = 0; j < _width; j++)
+            {
+                GameObject unclickedPrefab = Instantiate(PrefabFactory.GetUncoveredCellPrefab(), new Vector3(j * _scale, i * _scale, 0), Quaternion.identity, transform);
+                unclickedPrefab.GetComponent<SpriteRenderer>().size = new Vector3(_scale, _scale, 1);
+                _objectGrid[i, j] = unclickedPrefab;
             }
         }
     }

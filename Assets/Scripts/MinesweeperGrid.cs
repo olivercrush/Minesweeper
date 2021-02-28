@@ -51,24 +51,13 @@ public class MinesweeperGrid
         }
     }
 
-    /// <summary>
-    /// method <c>IsValidCell</c> checks if the coordinates are contained in the grid domain
-    /// </summary>
-    /// <param name="x">the x position of the point to check</param>
-    /// <param name="y">the y position of the point to check</param>
-    /// <returns>true if the point is in the grid domain, false otherwise</returns>
     public bool IsValidCell(int x, int y)
     {
         return y >= 0 && y < _heigth && x >= 0 && x < _width;
     }
 
-    /// <summary>
-    /// method <c>GetAdjacentBombCount</c> returns the number of bombs in adjacent cells
-    /// </summary>
-    /// <param name="x">the x position of the cell</param>
-    /// <param name="y">the y position of the cell</param>
-    /// <returns>an integer that represents the number of bombs in adjacent cells (max. 8)</returns>
-    public int GetAdjacentBombCount(int x, int y)
+
+    public int GetMooreBombCount(int x, int y)
     {
         int count = 0;
 
@@ -84,13 +73,6 @@ public class MinesweeperGrid
         return count;
     }
 
-    /// <summary>
-    /// method <c>GetBombsInRange</c> returns all bomb cells in range from (x, y), using taxi-distance
-    /// </summary>
-    /// <param name="x">the x position of the cell</param>
-    /// <param name="y">the y position of the cell</param>
-    /// <param name="range">the range in which we want to detect bombs</param>
-    /// <returns>the list containing all bomb cells in range of (x, y)</returns>
     public List<Cell> GetBombsInRange(int x, int y, int range)
     {
         List<Cell> bombList = new List<Cell>();

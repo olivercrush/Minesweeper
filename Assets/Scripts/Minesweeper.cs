@@ -85,7 +85,7 @@ public class Minesweeper : IObservable
         {
             _grid.TurnCell(x, y);
 
-            int adjacentBombCount = _grid.GetAdjacentBombCount(x, y);
+            int adjacentBombCount = _grid.GetMooreBombCount(x, y);
             _updatedCells.Add(new CellUpdate(CellUpdateType.DISCOVERED, x, y, adjacentBombCount));
 
             // if there is no adjacent bombs, we turn all adjacent cells
