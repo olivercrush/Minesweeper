@@ -14,11 +14,13 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
     public float _scale = 1f;
     public float _moveAreaSize = 2f;
 
+    public GameObject _ui;
+
     private GameObject[,] _objectGrid;
     private GameObject _moveArea;
 
     private bool _firstMoveDone = false;
-    private (int, int) _lastMove = (-1, -1);
+    private bool _minesweeperLocked = false;
 
     private bool _followCursor = false;
     private Vector3 _cursorOffset = Vector3.zero;
@@ -27,15 +29,8 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
 
     void Start()
     {
-        _minesweeper = new Minesweeper(_width, _heigth, _bombCount);
-        _minesweeper.RegisterObserver(this);
-
-        InstantiateObjects();
-        CenterCamera();
-
-        BoxCollider2D collider = GetComponent<BoxCollider2D>();
-        collider.size = new Vector2(_width * _scale, _heigth * _scale);
-        collider.offset = new Vector2(_width * _scale / 2 - _scale / 2, _heigth * _scale / 2 - _scale / 2);
+        _objectGrid = new GameObject[_heigth, _width];
+        ResetMinesweeper();
     }
 
     private void Update()
@@ -59,7 +54,7 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
 
     private void DiscoverAction()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !_minesweeperLocked)
         {
             Vector3 mousePos = Input.mousePosition;
             mousePos.z = 0.3f;
@@ -78,14 +73,6 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
                 {
                     _minesweeper.DiscoverFirstCell(x, y);
                     _firstMoveDone = true;
-                }
-            }
-            else
-            {
-                if (!_followCursor)
-                {
-                    _cursorOffset = mousePos - transform.position;
-                    _followCursor = true;
                 }
             }
         }
@@ -114,6 +101,22 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         {
             _followCursor = false;
             _cursorOffset = Vector3.zero;
+        }
+    }
+
+    private void OnMouseDown()
+    {
+        if (!_followCursor)
+        {
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.z = 0.3f;
+            mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+
+            if (!IsMouseOnMinesweeper(mousePos))
+            {
+                _cursorOffset = mousePos - transform.position;
+                _followCursor = true;
+            }
         }
     }
 
@@ -174,6 +177,8 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
 
                 case Minesweeper.CellUpdateType.EXPLOSION:
                     ReplaceCell(c.x, c.y, PrefabFactory.GetBombPrefab());
+                    _minesweeperLocked = true;
+                    _ui.SetActive(true);
                     break;
 
                 case Minesweeper.CellUpdateType.MARKED:
@@ -200,8 +205,6 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
 
     private void InstantiateObjects()
     {
-        _objectGrid = new GameObject[_heigth, _width];
-
         for (int i = 0; i < _heigth; i++)
         {
             for (int j = 0; j < _width; j++)
@@ -211,5 +214,38 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
                 _objectGrid[i, j] = unclickedPrefab;
             }
         }
+    }
+
+    public void ResetMinesweeper()
+    {
+        transform.position = new Vector3(0, 0, 0);
+
+        for (int i = 0; i < _heigth; i++)
+        {
+            for (int j = 0; j < _width; j++)
+            {
+                if (_objectGrid[i, j] != null)
+                {
+                    Destroy(_objectGrid[i, j]);
+                    _objectGrid[i, j] = null;
+                }
+            }
+        }
+
+        _followCursor = false;
+        _firstMoveDone = false;
+        _minesweeperLocked = false;
+
+        _minesweeper = new Minesweeper(_width, _heigth, _bombCount);
+        _minesweeper.RegisterObserver(this);
+
+        InstantiateObjects();
+        CenterCamera();
+
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        collider.size = new Vector2(_width * _scale, _heigth * _scale);
+        collider.offset = new Vector2(_width * _scale / 2 - _scale / 2, _heigth * _scale / 2 - _scale / 2);
+
+        _ui.SetActive(false);
     }
 }
