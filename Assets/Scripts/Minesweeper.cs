@@ -18,13 +18,15 @@ public class Minesweeper : IObservable
         public int x;
         public int y;
         public int moore_bombs_count;
+        public bool gameWon;
 
-        public CellUpdate(CellUpdateType t, int x, int y, int m)
+        public CellUpdate(CellUpdateType t, int x, int y, int m, bool gameWon)
         {
             this.type = t;
             this.x = x;
             this.y = y;
             this.moore_bombs_count = m;
+            this.gameWon = gameWon;
         }
     }
 
@@ -54,7 +56,7 @@ public class Minesweeper : IObservable
         {
             _grid.SwitchMarkCell(x, y);
             CellUpdateType type = (_grid.IsMarked(x, y)) ? CellUpdateType.MARKED : CellUpdateType.UNMARKED;
-            _updatedCells.Add(new CellUpdate(type, x, y, -1));
+            _updatedCells.Add(new CellUpdate(type, x, y, -1, false));
             NotifyObservers();
         }
     }
@@ -86,7 +88,7 @@ public class Minesweeper : IObservable
             _grid.TurnCell(x, y);
 
             int adjacentBombCount = _grid.GetMooreBombCount(x, y);
-            _updatedCells.Add(new CellUpdate(CellUpdateType.DISCOVERED, x, y, adjacentBombCount));
+            _updatedCells.Add(new CellUpdate(CellUpdateType.DISCOVERED, x, y, adjacentBombCount, _grid.IsGridOver()));
 
             // if there is no adjacent bombs, we turn all adjacent cells
             if (adjacentBombCount == 0)
@@ -105,7 +107,7 @@ public class Minesweeper : IObservable
         else if (level == 0 && _grid.IsBomb(x, y) && !_grid.IsMarked(x, y))
         {
             _grid.TurnCell(x, y);
-            _updatedCells.Add(new CellUpdate(CellUpdateType.EXPLOSION, x, y, -1));
+            _updatedCells.Add(new CellUpdate(CellUpdateType.EXPLOSION, x, y, -1, false));
         }
 
         if (level == 0) NotifyObservers();

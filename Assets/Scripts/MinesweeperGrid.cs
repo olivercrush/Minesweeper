@@ -137,6 +137,20 @@ public class MinesweeperGrid
         return grid;
     }
 
+    public bool IsGridOver()
+    {
+        for (int i = 0; i < _grid.GetLength(0); i++)
+        {
+            for (int j = 0; j < _grid.GetLength(1); j++)
+            {
+                Cell c = _grid[i, j];
+                if (!c.IsBomb() && !c.IsTurned()) return false;
+            }
+        }
+
+        return true;
+    }
+
     // SETTERS
 
     public void TurnCell(int x, int y)
