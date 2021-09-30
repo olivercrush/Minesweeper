@@ -14,9 +14,6 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
     public float _scale = 1f;
     public float _moveAreaSize = 2f;
 
-    public GameObject _gameOverUi;
-    public GameObject _gameWonUi;
-
     private GameObject[,] _objectGrid;
     private GameObject _moveArea;
 
@@ -177,14 +174,14 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
                     if (c.gameWon)
                     {
                         _minesweeperLocked = true;
-                        _gameWonUi.SetActive(true);
+                        //_gameWonUi.SetActive(true);
                     }
                     break;
 
                 case Minesweeper.CellUpdateType.EXPLOSION:
                     ReplaceCell(c.x, c.y, PrefabFactory.GetBombPrefab());
                     _minesweeperLocked = true;
-                    _gameOverUi.SetActive(true);
+                    //_gameOverUi.SetActive(true);
                     break;
 
                 case Minesweeper.CellUpdateType.MARKED:
@@ -252,7 +249,7 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         collider.size = new Vector2(_width * _scale, _heigth * _scale);
         collider.offset = new Vector2(_width * _scale / 2 - _scale / 2, _heigth * _scale / 2 - _scale / 2);
 
-        _gameOverUi.SetActive(false);
-        _gameWonUi.SetActive(false);
+        //_gameOverUi.SetActive(false);
+        //_gameWonUi.SetActive(false);
     }
 }

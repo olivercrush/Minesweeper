@@ -39,4 +39,15 @@ public static class PrefabFactory
         GameObject prefab = Resources.Load<GameObject>("Prefabs/Cell_Marked");
         return prefab;
     }
+
+    public static GameObject GetMinesweeperPrefab(int w, int h, int bombCount, GameObject camera)
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/Minesweeper");
+        MinesweeperWindow window = prefab.GetComponent<MinesweeperWindow>();
+        window._width = w;
+        window._heigth = h;
+        window._bombCount = bombCount;
+        window._camera = camera;
+        return prefab;
+    }
 }
