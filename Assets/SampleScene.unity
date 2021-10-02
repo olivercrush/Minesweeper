@@ -446,6 +446,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 385f125b568708e42ae59e83b63fbca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _minesweeperInstances:
+  - Width: 10
+    Height: 10
+    BombCount: 30
+  - Width: 5
+    Height: 10
+    BombCount: 15
+  - Width: 10
+    Height: 5
+    BombCount: 15
+  - Width: 5
+    Height: 5
+    BombCount: 5
+  - Width: 15
+    Height: 15
+    BombCount: 50
   _camera: {fileID: 519420028}
   _gameOverUi: {fileID: 1929797764}
   _gameWonUi: {fileID: 1283676612}

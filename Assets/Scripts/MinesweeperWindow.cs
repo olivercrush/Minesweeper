@@ -14,6 +14,9 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
     public float _scale = 1f;
     public float _moveAreaSize = 2f;
 
+    [HideInInspector]
+    public int _order;
+
     private GameObject[,] _objectGrid;
     private GameObject _moveArea;
 
@@ -42,11 +45,12 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         if (_followCursor && _cursorOffset != Vector3.zero)
         {
             Vector3 mousePos = Input.mousePosition;
-            mousePos.z = 0.3f;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+            mousePos.z = GetDepthPosition();
 
             // Pos : Debug.Log(mousePos - _cursorOffset);
             transform.position = mousePos - _cursorOffset;
+            transform.position = new Vector3(transform.position.x, transform.position.y, GetDepthPosition());
         }
     }
 
@@ -55,8 +59,8 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         if (Input.GetMouseButtonDown(0) && !_minesweeperLocked)
         {
             Vector3 mousePos = Input.mousePosition;
-            mousePos.z = 0.3f;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+            mousePos.z = GetDepthPosition();
 
             if (IsMouseOnMinesweeper(mousePos))
             {
@@ -81,8 +85,8 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         if (Input.GetMouseButtonDown(1))
         {
             Vector3 mousePos = Input.mousePosition;
-            mousePos.z = 0.3f;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+            mousePos.z = GetDepthPosition();
 
             if (IsMouseOnMinesweeper(mousePos))
             {
@@ -107,8 +111,8 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
         if (!_followCursor)
         {
             Vector3 mousePos = Input.mousePosition;
-            mousePos.z = 0.3f;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+            mousePos.z = GetDepthPosition();
 
             if (!IsMouseOnMinesweeper(mousePos))
             {
@@ -124,7 +128,7 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
 
         if (_moveArea == null)
         {
-            _moveArea = Instantiate(PrefabFactory.GetRectPrefab(), new Vector3(transform.position.x + _width * _scale / 2 - _scale / 2, transform.position.y + _heigth * _scale / 2 - _scale / 2, 1), Quaternion.identity, transform);
+            _moveArea = Instantiate(PrefabFactory.GetRectPrefab(), new Vector3(transform.position.x + _width * _scale / 2 - _scale / 2, transform.position.y + _heigth * _scale / 2 - _scale / 2, GetDepthPosition() + 0.5f), Quaternion.identity, transform);
         }
 
         _moveArea.GetComponent<SpriteRenderer>().size = new Vector2(_width * _scale + _moveAreaSize, _heigth * _scale + _moveAreaSize);
@@ -251,5 +255,10 @@ public class MinesweeperWindow : MonoBehaviour, IObserver
 
         //_gameOverUi.SetActive(false);
         //_gameWonUi.SetActive(false);
+    }
+
+    private float GetDepthPosition()
+    {
+        return _order * 1f;
     }
 }

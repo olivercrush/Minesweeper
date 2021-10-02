@@ -40,7 +40,7 @@ public static class PrefabFactory
         return prefab;
     }
 
-    public static GameObject GetMinesweeperPrefab(int w, int h, int bombCount, GameObject camera)
+    public static GameObject GetMinesweeperPrefab(int w, int h, int bombCount, int order, GameObject camera)
     {
         GameObject prefab = Resources.Load<GameObject>("Prefabs/Minesweeper");
         MinesweeperWindow window = prefab.GetComponent<MinesweeperWindow>();
@@ -48,6 +48,7 @@ public static class PrefabFactory
         window._heigth = h;
         window._bombCount = bombCount;
         window._camera = camera;
+        window._order = order;
         return prefab;
     }
 }
